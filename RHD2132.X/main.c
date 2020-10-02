@@ -45,8 +45,7 @@
 /**
   Section: Included Files
 */
-#include "mcc_generated_files/system.h"
-#include "mcc_generated_files/spi1.h"
+#include "mcc_generated_files/mcc.h"
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
 #include "Intan_RHD2132.h"
@@ -54,27 +53,29 @@
                          Main application
  */
 
-//Now it is github
 int main(void)
 {
-    uint16_t IntanChar[5];
-    uint16_t result; //ROM REG 40-44 which contains INTAN in ASCII
+    uint16_t IntanChar[5];//ROM REG 40-44 which contains INTAN in ASCII
+    uint16_t result; 
         
     // initialize the device
     SYSTEM_Initialize();
     __delay_ms(100);
-    SPI1_Initialize();
+  //  UART1_Initialize();
+  //  __delay_ms(100);
+  //  SPI1_Initialize();
+  //  __delay_ms(100);
+
+    //Test Writing 0xDE to REG0 (enable amplifier voltage references)
+    Intan_WriteREG(0, 0xDE);
     __delay_ms(100);
-   // Intan_Initialization(125);
-    __delay_ms(100);
-    
-    //uint16_t IntanChar[5]={0}, result; //ROM REG 40-44 which contains INTAN in ASCII
+  
     while(1)
     {
         // Add your application code
         //DataExchange16bitTest(0xAACC); //function verified
         Intan_SPI_Test(IntanChar);
-        //result = Intan_ReadREG(40);
+        //result = Intan_ReadREG(41);
         __delay_ms(100);
         
     }

@@ -1,6 +1,4 @@
-#include "mcc_generated_files/spi1.h"
-#include "mcc_generated_files/pin_manager.h"
-#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/mcc.h"
 #include <string.h>
 #include <stdio.h>
 #define FCY _XTAL_FREQ/2
@@ -34,14 +32,14 @@ uint16_t Intan_ReadREG(uint16_t addr)
     CMD = READ_CMD | (addr<<8);
     
     Tx_buf[0] = CMD;
-    Tx_buf[1] = CMD;
-    Tx_buf[2] = CMD;
+    Tx_buf[1] = Dummy_CMD;
+    Tx_buf[2] = Dummy_CMD;
     
-    uint16_t Rx_buf[3] = {0};
+    uint16_t Rx_buf[3];
     int i; 
     for(i=0; i<3; i++){
-        __delay_us(1); // delay between CMD 
-                       // without setting a delay tcsoff = 1us
+        //__delay_us(1); // delay between CMD 
+                         // without setting a delay tcsoff = 1us
         CS1_SetLow();
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
@@ -62,11 +60,11 @@ void Intan_SPI_Test(uint16_t *data)
     for(i=0; i<7; i++)
     {
         CMD = READ_CMD | (addr<<8);
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetLow();
-        __delay_us(1);
+        //__delay_us(1);
         Rx_buf[i] = SPI1_Exchange16bit(CMD);
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetHigh();
         addr++;
     }
@@ -92,14 +90,14 @@ bool Intan_WriteREG(uint16_t addr, uint16_t data)
     Tx_buf[0] = CMD;
     Tx_buf[1] = Dummy_CMD;
     Tx_buf[2] = Dummy_CMD;
-    uint16_t Rx_buf[3] = {0};
+    uint16_t Rx_buf[3];
     int i; 
     for(i=0; i<3; i++){
         CS1_SetLow();
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
     }
-    if(Rx_buf[2] == data)
+    if((Rx_buf[2]|0x00FF) == data)
     {
         printf("successful writing \n");
         return true;
@@ -115,15 +113,15 @@ uint16_t Intan_Convert_Single(uint16_t channel)
 {
     //read result from single channel
     uint16_t CMD;
-    CMD = CONVERT_CMD | (channel<< 8);
+    CMD = CONVERT_CMD | (channel << 8);
     uint16_t Tx_buf[3];
     Tx_buf[0] = CMD;
     Tx_buf[1] = Dummy_CMD;
     Tx_buf[2] = Dummy_CMD;
-    uint16_t Rx_buf[3] = {0};
+    uint16_t Rx_buf[3];
     int i; 
     for(i=0; i<3; i++){
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetLow();
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
@@ -134,8 +132,10 @@ uint16_t Intan_Convert_Single(uint16_t channel)
 void Intan_Convert_32(uint16_t *result)
 {
     //read results cycling through successive channel, starting from channel 0 
-    uint16_t channel=0;
+    uint16_t channel;
     uint16_t Rx_buf[34], CMD;
+    
+    channel = 0;
     int i;
     for(i=0; i<34; i++)
     {
@@ -147,7 +147,7 @@ void Intan_Convert_32(uint16_t *result)
         {    
             CMD = CONVERT_CMD | (channel<< 8);
         }
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetLow();
         Rx_buf[i] = SPI1_Exchange16bit(CMD);
         CS1_SetHigh();
@@ -163,13 +163,13 @@ void Intan_ADC_Calibrate(void)
     UNUSED(tmp);
     Tx_buf[0] = CALIBRATE_CMD;
     int i;
-    for(i = 0; i < 10; i++)
+    for(i = 1; i < 10; i++)
     {
         Tx_buf[i] = Dummy_CMD;
     }    
     for(i=0; i<10; i++)
     {    
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetLow();
         tmp = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
@@ -179,7 +179,6 @@ void Intan_ADC_Calibrate(void)
 void Intan_ADC_Clear(void)
 { 
     uint16_t tmp; UNUSED(tmp);
-    __delay_us(1);
     CS1_SetLow();
     tmp = SPI1_Exchange16bit(CLEAR_CMD);
     CS1_SetHigh();
@@ -355,14 +354,14 @@ void Intan_REG_Initialization(double fSCLK)
     Tx_buf[13] = (adcAux3En << 7) | (rLDac3 << 6) | rLDac2;
     Tx_buf[14] = (aPwr[7] << 7) | (aPwr[6] << 6) | (aPwr[5] << 5) | (aPwr[4] << 4) | (aPwr[3] << 3) | (aPwr[2] << 2) | (aPwr[1] << 1) | aPwr[0];
     Tx_buf[15] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
-    Tx_buf[16] =  (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
-    Tx_buf[17] =   (aPwr[31] << 7) | (aPwr[30] << 6) | (aPwr[29] << 5) | (aPwr[28] << 4) | (aPwr[27] << 3) | (aPwr[26] << 2) | (aPwr[25] << 1) | aPwr[24];      
+    Tx_buf[16] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
+    Tx_buf[17] = (aPwr[31] << 7) | (aPwr[30] << 6) | (aPwr[29] << 5) | (aPwr[28] << 4) | (aPwr[27] << 3) | (aPwr[26] << 2) | (aPwr[25] << 1) | aPwr[24];      
     
     //Writing data to registers
     for(i = 0; i < 18; i++)
     {   
         CMD = WRITE_CMD | (i << 8) | Tx_buf[i];
-        __delay_us(1);
+        //__delay_us(1);
         CS1_SetLow();
         tmp = SPI1_Exchange16bit(CMD);
         CS1_SetHigh();
@@ -372,7 +371,6 @@ void Intan_REG_Initialization(double fSCLK)
 void Intan_Initialization(double fSCLK)
 {
     Intan_REG_Initialization(fSCLK);
-    __delay_ms(10);
-    Intan_ADC_Calibrate();
-    
+    __delay_ms(1);
+    Intan_ADC_Calibrate();    
 }
