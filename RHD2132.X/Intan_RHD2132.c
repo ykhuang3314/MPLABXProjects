@@ -3,6 +3,7 @@
 #include <stdio.h>
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
+#include "Comm.h"
 
 //Command 
 #define Dummy_CMD 0x0000

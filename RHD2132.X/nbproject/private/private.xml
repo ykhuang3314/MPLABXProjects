@@ -4,7 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/mcc_generated_files/spi1.c</file>
+            <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/mcc_generated_files/uart1.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/main.c</file>
+            <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Comm.c</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Intan_RHD2132.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Intan_RHD2132.c</file>
         </group>

@@ -1,5 +1,5 @@
-build/default/production/main.o:  \
-main.c  \
+build/default/production/Comm.o:  \
+Comm.c  \
 mcc_generated_files/mcc.h  \
  mcc_generated_files/system.h  \
 mcc_generated_files/clock.h  \
@@ -9,5 +9,4 @@ mcc_generated_files/tmr1.h  \
 mcc_generated_files/spi1.h  \
  mcc_generated_files/interrupt_manager.h  \
 mcc_generated_files/traps.h  \
- Intan_RHD2132.h  \
-Comm.h 
+ Intan_RHD2132.h 

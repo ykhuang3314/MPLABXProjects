@@ -91,8 +91,8 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "uart1.h"
 #include "tmr1.h"
+#include "uart1.h"
 #include "spi1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
@@ -103,8 +103,8 @@ void SYSTEM_Initialize(void)
     CLOCK_Initialize();
     INTERRUPT_Initialize();
     SPI1_Initialize();
-    UART1_Initialize();
     TMR1_Initialize();
+    UART1_Initialize();
 }
 
 /**

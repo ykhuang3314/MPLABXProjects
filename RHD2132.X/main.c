@@ -49,34 +49,25 @@
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
 #include "Intan_RHD2132.h"
+#include "Comm.h"
 /*
                          Main application
  */
 
 int main(void)
 {
-    uint16_t IntanChar[5];//ROM REG 40-44 which contains INTAN in ASCII
-    uint16_t result; 
-        
+
     // initialize the device
     SYSTEM_Initialize();
-    __delay_ms(100);
-  //  UART1_Initialize();
-  //  __delay_ms(100);
-  //  SPI1_Initialize();
-  //  __delay_ms(100);
-
-    //Test Writing 0xDE to REG0 (enable amplifier voltage references)
-    Intan_WriteREG(0, 0xDE);
     __delay_ms(100);
   
     while(1)
     {
         // Add your application code
-        //DataExchange16bitTest(0xAACC); //function verified
-        Intan_SPI_Test(IntanChar);
-        //result = Intan_ReadREG(41);
-        __delay_ms(100);
+        if(UART1_IsRxReady()){
+            process_message();
+        }    
+        
         
     }
 
