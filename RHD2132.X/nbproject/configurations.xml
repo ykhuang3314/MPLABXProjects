@@ -16,9 +16,12 @@
         <itemPath>mcc_generated_files/system.h</itemPath>
         <itemPath>mcc_generated_files/uart1.h</itemPath>
         <itemPath>mcc_generated_files/tmr1.h</itemPath>
+        <itemPath>mcc_generated_files/spi2_types.h</itemPath>
+        <itemPath>mcc_generated_files/spi2_driver.h</itemPath>
       </logicalFolder>
       <itemPath>Intan_RHD2132.h</itemPath>
       <itemPath>Comm.h</itemPath>
+      <itemPath>SST26VF016B.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -39,10 +42,12 @@
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/uart1.c</itemPath>
         <itemPath>mcc_generated_files/tmr1.c</itemPath>
+        <itemPath>mcc_generated_files/spi2_driver.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>Intan_RHD2132.c</itemPath>
       <itemPath>Comm.c</itemPath>
+      <itemPath>SST26VF016B.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

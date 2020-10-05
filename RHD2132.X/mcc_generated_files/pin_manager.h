@@ -55,6 +55,298 @@
 */
 /**
   @Summary
+    Sets the GPIO pin, RA0, high using LATA0.
+
+  @Description
+    Sets the GPIO pin, RA0, high using LATA0.
+
+  @Preconditions
+    The RA0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA0 high (1)
+    CS2_SetHigh();
+    </code>
+
+*/
+#define CS2_SetHigh()          (_LATA0 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RA0, low using LATA0.
+
+  @Description
+    Sets the GPIO pin, RA0, low using LATA0.
+
+  @Preconditions
+    The RA0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA0 low (0)
+    CS2_SetLow();
+    </code>
+
+*/
+#define CS2_SetLow()           (_LATA0 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RA0, using LATA0.
+
+  @Description
+    Toggles the GPIO pin, RA0, using LATA0.
+
+  @Preconditions
+    The RA0 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RA0
+    CS2_Toggle();
+    </code>
+
+*/
+#define CS2_Toggle()           (_LATA0 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RA0.
+
+  @Description
+    Reads the value of the GPIO pin, RA0.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RA0
+    postValue = CS2_GetValue();
+    </code>
+
+*/
+#define CS2_GetValue()         _RA0
+/**
+  @Summary
+    Configures the GPIO pin, RA0, as an input.
+
+  @Description
+    Configures the GPIO pin, RA0, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA0 as an input
+    CS2_SetDigitalInput();
+    </code>
+
+*/
+#define CS2_SetDigitalInput()  (_TRISA0 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RA0, as an output.
+
+  @Description
+    Configures the GPIO pin, RA0, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA0 as an output
+    CS2_SetDigitalOutput();
+    </code>
+
+*/
+#define CS2_SetDigitalOutput() (_TRISA0 = 0)
+/**
+  @Summary
+    Sets the GPIO pin, RA7, high using LATA7.
+
+  @Description
+    Sets the GPIO pin, RA7, high using LATA7.
+
+  @Preconditions
+    The RA7 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA7 high (1)
+    SDI2_SetHigh();
+    </code>
+
+*/
+#define SDI2_SetHigh()          (_LATA7 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RA7, low using LATA7.
+
+  @Description
+    Sets the GPIO pin, RA7, low using LATA7.
+
+  @Preconditions
+    The RA7 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RA7 low (0)
+    SDI2_SetLow();
+    </code>
+
+*/
+#define SDI2_SetLow()           (_LATA7 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RA7, using LATA7.
+
+  @Description
+    Toggles the GPIO pin, RA7, using LATA7.
+
+  @Preconditions
+    The RA7 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RA7
+    SDI2_Toggle();
+    </code>
+
+*/
+#define SDI2_Toggle()           (_LATA7 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RA7.
+
+  @Description
+    Reads the value of the GPIO pin, RA7.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RA7
+    postValue = SDI2_GetValue();
+    </code>
+
+*/
+#define SDI2_GetValue()         _RA7
+/**
+  @Summary
+    Configures the GPIO pin, RA7, as an input.
+
+  @Description
+    Configures the GPIO pin, RA7, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA7 as an input
+    SDI2_SetDigitalInput();
+    </code>
+
+*/
+#define SDI2_SetDigitalInput()  (_TRISA7 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RA7, as an output.
+
+  @Description
+    Configures the GPIO pin, RA7, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RA7 as an output
+    SDI2_SetDigitalOutput();
+    </code>
+
+*/
+#define SDI2_SetDigitalOutput() (_TRISA7 = 0)
+/**
+  @Summary
     Sets the GPIO pin, RB10, high using LATB10.
 
   @Description
@@ -783,6 +1075,298 @@
 
 */
 #define SS1_SetDigitalOutput() (_TRISB15 = 0)
+/**
+  @Summary
+    Sets the GPIO pin, RB5, high using LATB5.
+
+  @Description
+    Sets the GPIO pin, RB5, high using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB5 high (1)
+    SCK2_SetHigh();
+    </code>
+
+*/
+#define SCK2_SetHigh()          (_LATB5 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RB5, low using LATB5.
+
+  @Description
+    Sets the GPIO pin, RB5, low using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB5 low (0)
+    SCK2_SetLow();
+    </code>
+
+*/
+#define SCK2_SetLow()           (_LATB5 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RB5, using LATB5.
+
+  @Description
+    Toggles the GPIO pin, RB5, using LATB5.
+
+  @Preconditions
+    The RB5 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB5
+    SCK2_Toggle();
+    </code>
+
+*/
+#define SCK2_Toggle()           (_LATB5 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB5.
+
+  @Description
+    Reads the value of the GPIO pin, RB5.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB5
+    postValue = SCK2_GetValue();
+    </code>
+
+*/
+#define SCK2_GetValue()         _RB5
+/**
+  @Summary
+    Configures the GPIO pin, RB5, as an input.
+
+  @Description
+    Configures the GPIO pin, RB5, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB5 as an input
+    SCK2_SetDigitalInput();
+    </code>
+
+*/
+#define SCK2_SetDigitalInput()  (_TRISB5 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RB5, as an output.
+
+  @Description
+    Configures the GPIO pin, RB5, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB5 as an output
+    SCK2_SetDigitalOutput();
+    </code>
+
+*/
+#define SCK2_SetDigitalOutput() (_TRISB5 = 0)
+/**
+  @Summary
+    Sets the GPIO pin, RB6, high using LATB6.
+
+  @Description
+    Sets the GPIO pin, RB6, high using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB6 high (1)
+    SDO2_SetHigh();
+    </code>
+
+*/
+#define SDO2_SetHigh()          (_LATB6 = 1)
+/**
+  @Summary
+    Sets the GPIO pin, RB6, low using LATB6.
+
+  @Description
+    Sets the GPIO pin, RB6, low using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Set RB6 low (0)
+    SDO2_SetLow();
+    </code>
+
+*/
+#define SDO2_SetLow()           (_LATB6 = 0)
+/**
+  @Summary
+    Toggles the GPIO pin, RB6, using LATB6.
+
+  @Description
+    Toggles the GPIO pin, RB6, using LATB6.
+
+  @Preconditions
+    The RB6 must be set to an output.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Toggle RB6
+    SDO2_Toggle();
+    </code>
+
+*/
+#define SDO2_Toggle()           (_LATB6 ^= 1)
+/**
+  @Summary
+    Reads the value of the GPIO pin, RB6.
+
+  @Description
+    Reads the value of the GPIO pin, RB6.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    uint16_t portValue;
+
+    // Read RB6
+    postValue = SDO2_GetValue();
+    </code>
+
+*/
+#define SDO2_GetValue()         _RB6
+/**
+  @Summary
+    Configures the GPIO pin, RB6, as an input.
+
+  @Description
+    Configures the GPIO pin, RB6, as an input.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB6 as an input
+    SDO2_SetDigitalInput();
+    </code>
+
+*/
+#define SDO2_SetDigitalInput()  (_TRISB6 = 1)
+/**
+  @Summary
+    Configures the GPIO pin, RB6, as an output.
+
+  @Description
+    Configures the GPIO pin, RB6, as an output.
+
+  @Preconditions
+    None.
+
+  @Returns
+    None.
+
+  @Param
+    None.
+
+  @Example
+    <code>
+    // Sets the RB6 as an output
+    SDO2_SetDigitalOutput();
+    </code>
+
+*/
+#define SDO2_SetDigitalOutput() (_TRISB6 = 0)
 
 /**
     Section: Function Prototypes
