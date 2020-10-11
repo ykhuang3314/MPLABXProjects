@@ -1,5 +1,8 @@
 #include "mcc_generated_files/mcc.h"
 #include "Intan_RHD2132.h"
+#include "SST26VF016B.h"
+#include "SST26VF016B.h"
+
 
 void _put(uint8_t *pt)
 {
@@ -25,7 +28,7 @@ void process_message(void)
     uint8_t message;
     uint16_t IntanChar[5];
     bool TestResult;
-    
+    uint8_t ID[3];
     message = UART1_Read();
     
     switch(message){
@@ -55,6 +58,14 @@ void process_message(void)
             Intan_Initialization(250);
             break;
         
+        case 'm': // test the communication between memory and pic
+            //_put("Reading JEDEC ID of the device... \n");
+            JEDECID(ID);
+            if((ID[0] == 0xBF) && (ID[1] == 0x26) && (ID[2] == 0x41))
+                _put("success \n");
+            else
+                _put("fail\n");
+            
         case 'c': //converting data
             break;
         

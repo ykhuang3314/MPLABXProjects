@@ -12,20 +12,31 @@
 extern "C" {
 #endif
 
-// Device Operation Instructions
+// Device Operation Instructions for SST26VF016B  
+// Configuration    
 #define RDSR 0x05 // Read Status REG
-#define WRSR 0x01 // Write Status REG
+#define WRSR 0x01 // Write Status REG      
 #define RDCR 0x35 // Read Config. REG
-#define READ 0x03 // Read Memory
-#define RDJEDECID 0x9F // JEDEC-ID
+#define NOP 0x00 // No operation    
+// Read    
+#define READ 0x03 // Read Memory up to 40MHz
+#define READ_FAST 0x0B // Read Memory at high speed up to 104MHz    
+// Identification 
+#define RDJEDECID 0x9F // JEDEC-ID: Return BF 26 41
+// Write    
 #define WREN 0x06 // Write Enable
 #define WRDI 0x04 // Write Disable
-#define PP 0x02 // Page Program
+#define PP 0x02 // Page Program: write one byte or a page of up to 256 bytes)
+// Erase
+#define SE 0x20 // Erase 4KByte of memory array (one sector)
+#define BE 0xD8 // Erase 32KByte of memory array (one block)    
+#define CE 0xC7 // Erase full array   
     
-// Status register mask
-#define isBUSY_MASK 0x01
-#define isWRITEALBE_MASK 0x02 
-     
+// Mask for Status REG
+#define isBUSY_MASK 0x01 // internal write operation in progress 
+#define isWRITEALBE_MASK 0x02 // device is write-enabled 
+#define isERASESUSPEND_MASH 0x04 // erase suspended    
+#define isPROGRAMSUSPEND_MASH 0x08 // program suspended
 
 uint8_t READ_STATUS_REG(void);
 void JEDECID(uint8_t *data);

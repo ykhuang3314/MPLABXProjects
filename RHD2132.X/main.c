@@ -50,6 +50,7 @@
 #include "libpic30.h"
 #include "Intan_RHD2132.h"
 #include "Comm.h"
+#include "SST26VF016B.h"
 /*
                          Main application
  */
@@ -60,6 +61,8 @@ int main(void)
     // initialize the device
     SYSTEM_Initialize();
     __delay_ms(100);
+    
+    spi2_open(SPI2_DEFAULT);
   
     while(1)
     {
@@ -67,7 +70,6 @@ int main(void)
         if(UART1_IsRxReady()){
             process_message();
         }    
-        
         
     }
 

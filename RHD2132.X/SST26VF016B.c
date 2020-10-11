@@ -12,11 +12,11 @@ uint8_t READ_STATUS_REG(void){
     uint8_t Rx_buf[2];
     
     int i;
+    CS2_SetLow();
     for(i=0; i<2; i++){
-        CS2_SetLow();
         Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
-        CS2_SetHigh();
     }
+    CS2_SetHigh();
     return Rx_buf[1];    
 }
 
@@ -24,15 +24,18 @@ void JEDECID(uint8_t* data){
     
     uint8_t Tx_buf[4];
     Tx_buf[0] = RDJEDECID;
-    
+    int i;
+    for (i=1; i<4; i++){
+        Tx_buf[i] = NOP;
+    }
     uint8_t Rx_buf[4];
     
-    int i;
+    CS2_SetLow();
     for(i=0; i<4; i++){
-        CS2_SetLow();
         Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
-        CS2_SetHigh();
     }
+    CS2_SetHigh();
+    
     memcpy(data, &Rx_buf[1], 3);
     
 }
@@ -92,11 +95,11 @@ void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     Rx_buf = (uint8_t *) malloc(n+4);
     
     int i;
+    CS2_SetLow();
     for(i=0; i<(n+4); i++){
-        CS2_SetLow();
         Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
-        CS2_SetHigh();
     }
+    CS2_SetHigh();    
     memcpy(data, &Rx_buf[4], n);
     
     free(Tx_buf);
@@ -131,12 +134,11 @@ bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     memcpy(&Tx_buf[4], data, n);
     
     int i;
+    CS2_SetLow();
     for(i=0; i<(n+4); i++){
-        CS2_SetLow();
         spi2_writeByte(Tx_buf[i]);
-        CS2_SetHigh();
     }
-    
+    CS2_SetHigh();
     // waiting
     while(IS_BUSY());
     
