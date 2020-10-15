@@ -31,6 +31,10 @@ extern "C" {
 #define SE 0x20 // Erase 4KByte of memory array (one sector)
 #define BE 0xD8 // Erase 32KByte of memory array (one block)    
 #define CE 0xC7 // Erase full array   
+
+// Protection
+#define LBPR 0x8D
+#define ULBPR 0x98    
     
 // Mask for Status REG
 #define isBUSY_MASK 0x01 // internal write operation in progress 
@@ -46,7 +50,12 @@ bool WRITE_ENABLE(void);
 bool WRITE_DISABLE(void);
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n);
 bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n);
-    
+void LOCK_PROTECTION(void);
+void UNLOCK_PROTECTION(void);
+void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
+//void BLOCK_ERASE (uint16_t block_addr, bool flagwait);
+void CHIP_ERASE (bool flagwait);
+
 #ifdef	__cplusplus
 }
 #endif
