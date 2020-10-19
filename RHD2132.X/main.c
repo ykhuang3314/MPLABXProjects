@@ -63,7 +63,9 @@ int main(void)
     __delay_ms(100);
     
     spi2_open(SPI2_DEFAULT);
-  
+    CS2_SetHigh();
+    CS1_SetHigh();
+    
     while(1)
     {
         // Add your application code

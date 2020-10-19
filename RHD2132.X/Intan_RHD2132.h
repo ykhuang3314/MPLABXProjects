@@ -19,9 +19,9 @@ uint16_t Intan_Convert_Single(uint16_t channel);
 void Intan_Convert_32(uint16_t *result);
 void Intan_ADC_Calibrate(void);
 void Intan_ADC_Clear(void);
-void Intan_REG_Initialization(double fSCLK);
-void Intan_Initialization(double fSCLK);
-void Intan_SPI_Test(uint16_t *data);
+void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data);
+bool Intan_Initialization(double fSCLK);
+bool Intan_SPI_Test(void);
 
 #ifdef	__cplusplus
 }

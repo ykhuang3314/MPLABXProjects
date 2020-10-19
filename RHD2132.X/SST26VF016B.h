@@ -46,15 +46,17 @@ uint8_t READ_STATUS_REG(void);
 void JEDECID(uint8_t *data);
 bool IS_BUSY(void);
 bool IS_WRITEABLE(void);
-bool WRITE_ENABLE(void);
-bool WRITE_DISABLE(void);
+void WRITE_ENABLE(void);
+void WRITE_DISABLE(void);
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n);
-bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n);
+void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n);
 void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
-//void BLOCK_ERASE (uint16_t block_addr, bool flagwait);
 void CHIP_ERASE (bool flagwait);
+bool TEST_COMM_MEM (void); 
+bool TEST_WRITE_READ(void);
+
 
 #ifdef	__cplusplus
 }

@@ -5,11 +5,13 @@
 #include "SST26VF016B.h"
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
+#include "Comm.h"
 
 uint8_t READ_STATUS_REG(void){
     
     uint8_t Tx_buf[2];
     Tx_buf[0] = RDSR; 
+    Tx_buf[1] = NOP;
     
     uint8_t Rx_buf[2];
     
@@ -64,25 +66,23 @@ bool IS_WRITEABLE(void){
         return false;
 }
 
-bool WRITE_ENABLE(void){
+void WRITE_ENABLE(void){
     
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = WREN;
     CS2_SetLow();
-    spi2_writeByte(CMD);
+    Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
-    return(IS_WRITEABLE());
 }
 
-bool WRITE_DISABLE(void){
+void WRITE_DISABLE(void){
     
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = WRDI;
     CS2_SetLow();
-    spi2_writeByte(CMD);
+    Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
-    // check status register to confirm that data is not able to be written
-    return(!(IS_WRITEABLE()));
+
 }
 
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
@@ -110,11 +110,7 @@ void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     free(Rx_buf);
 }
 
-bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
-    
-    // maximum data cycle = 256
-    if(n>256)
-        return false;
+void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     
     // Starting address
     uint32_t address;
@@ -123,12 +119,11 @@ bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     address += addr;
     
     // Set to be writable and check if it's busy
-    while(!(WRITE_ENABLE()));
-    if(IS_BUSY())
-        return false;
+    WRITE_ENABLE();
     
     // Write data
     uint8_t *Tx_buf;
+    uint8_t Rx;
     Tx_buf = (uint8_t *) malloc(n+4);
     
     Tx_buf[0] = PP;
@@ -140,41 +135,40 @@ bool PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     int i;
     CS2_SetLow();
     for(i=0; i<(n+4); i++){
-        spi2_writeByte(Tx_buf[i]);
+        Rx = spi2_exchangeByte(Tx_buf[i]);
     }
     CS2_SetHigh();
     // waiting
     while(IS_BUSY());
     
     free(Tx_buf);
-    
-    return true;
+
 }
 
 void LOCK_PROTECTION(void){
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = LBPR;
     //prior to lock block protection, execute write enable
-    while(!(WRITE_ENABLE()));
+    WRITE_ENABLE();
     CS2_SetLow();
-    spi2_writeByte(CMD);
+    Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
 }
 
 void UNLOCK_PROTECTION(void){
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = ULBPR;
     //prior to unlock block protection, execute write enable
-    while(!(WRITE_ENABLE()));
+    WRITE_ENABLE();
     CS2_SetLow();
-    spi2_writeByte(CMD);
+    Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
 }
 
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait){
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = SE;
-    uint16_t Addr;
+    uint32_t Addr;
     Addr = sec_no;
     Addr = Addr << 12; // 4KByte sector
     uint8_t Tx_buf[4];
@@ -185,31 +179,81 @@ void SECTOR_ERASE (uint16_t sec_no, bool flagwait){
     Tx_buf[3] = Addr && 0xFF;           // addr[7:0]
     
     //prior to erase sector, execute write enable
-    while(!(WRITE_ENABLE()));
+    WRITE_ENABLE();
     
     int i;
     CS2_SetLow();
     for(i=0; i<4; i++){
-        spi2_writeByte(Tx_buf[i]);
+        Rx = spi2_exchangeByte(Tx_buf[i]);
     }
     CS2_SetHigh();
     
     //waiting for erasing
-    while(!(IS_BUSY()) && flagwait){
-        __delay_ms(1);
-    }
+    while(IS_BUSY() && flagwait);
 }
 
 void CHIP_ERASE (bool flagwait){
-    uint8_t CMD;
+    uint8_t CMD, Rx;
     CMD = CE;
     //prior to erasing memory, execute write enable
-    while(!(WRITE_ENABLE()));
+    WRITE_ENABLE();
     CS2_SetLow();
-    spi2_writeByte(CMD);
+    Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
     //waiting for erasing
-    while(!(IS_BUSY()) && flagwait){
-        __delay_ms(1);
+    while(IS_BUSY() && flagwait){
+        __delay_us(10);
     }
+}
+
+bool TEST_COMM_MEM(void){
+    uint8_t ID[3];
+    JEDECID(ID);
+    if((ID[0] == 0xBF) && (ID[1] == 0x26) && (ID[2] == 0x41))
+        return true;
+    else
+        return false;
+}
+
+
+bool TEST_WRITE_READ(void){
+    
+    bool TestResult;
+    
+    uint16_t data_size, wsec_no, init_addr;
+    data_size = 6;
+    uint8_t wdata[data_size], rdata[data_size];
+    
+    wdata[0] = 'K';
+    wdata[1] = 'T';
+    wdata[2] = 'H';
+    wdata[3] = 'E';
+    wdata[4] = 'M';
+    wdata[5] = 'G';
+    
+    // address
+    wsec_no = 0; init_addr = 0;
+    
+    // To write data into memory, unlock block protection REG.
+    UNLOCK_PROTECTION();
+    
+    // Erase memory array before writing
+    SECTOR_ERASE (wsec_no, true);    
+    
+    // Write data into memory
+    PAGE_PROGRAM (wsec_no, init_addr, wdata, data_size);
+    
+    // Starting address for reading
+    uint32_t addr;
+    addr = (wsec_no << 12) | init_addr;
+    READ_MEM (addr, rdata, data_size);
+    
+    int i; 
+    TestResult = true;
+    for(i=0; i<data_size; i++){
+        TestResult |= (rdata[i] == wdata[i]);
+    }
+    
+    return TestResult;
+    
 }

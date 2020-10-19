@@ -154,14 +154,14 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x84c           0xc72  (3186)
-.const                       0xa4c                0x98            0xe4  (228)
-.text                        0xae4               0xf86          0x1749  (5961)
-.dinit                      0x1a6a                0x9e            0xed  (237)
-.text                       0x1b08               0x12c           0x1c2  (450)
-.init.delay32               0x1c34                0x1c            0x2a  (42)
-.text                       0x1c50                0x2a            0x3f  (63)
+.const                       0xa4c                0x66            0x99  (153)
+.text                        0xab2              0x1184          0x1a46  (6726)
+.dinit                      0x1c36                0x9e            0xed  (237)
+.text                       0x1cd4               0x130           0x1c8  (456)
+.init.delay32               0x1e04                0x1c            0x2a  (42)
+.text                       0x1e20                0x2a            0x3f  (63)
 
-                 Total "program" memory used (bytes):         0x27b7  (10167) 63%
+                 Total "program" memory used (bytes):         0x2a6f  (10863) 67%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x800]
@@ -260,152 +260,156 @@ External Symbols in Program Memory (by address):
                   0x000a40                  ___mulp32eds3
                   0x000a40                  ___mulp32peds3
                   0x000a40                  ___mulsi3
-                  0x000ae4                  _DataExchange16bitTest
-                  0x000af6                  _Intan_ReadREG
-                  0x000b3e                  _Intan_SPI_Test
-                  0x000b88                  _Intan_WriteREG
-                  0x000c0c                  _Intan_Convert_Single
-                  0x000c50                  _Intan_Convert_32
-                  0x000ca2                  _Intan_ADC_Calibrate
-                  0x000ce4                  _Intan_ADC_Clear
-                  0x000cf4                  _Intan_REG_Initialization
-                  0x001086                  _Intan_Initialization
-                  0x00109a                  _READ_STATUS_REG
-                  0x0010c6                  _JEDECID
-                  0x001114                  _IS_BUSY
-                  0x00112e                  _IS_WRITEABLE
-                  0x001146                  _WRITE_ENABLE
-                  0x00115a                  _WRITE_DISABLE
-                  0x001174                  _READ_MEM
-                  0x001204                  _PAGE_PROGRAM
-                  0x0012cc                  _LOCK_PROTECTION
-                  0x0012e8                  _UNLOCK_PROTECTION
-                  0x001304                  _SECTOR_ERASE
-                  0x001388                  _CHIP_ERASE
-                  0x0013bc                  _UART1_Initialize
-                  0x0013f0                  _UART1_SetTxInterruptHandler
-                  0x00140e                  _UART1_SetRxInterruptHandler
-                  0x00142c                  _UART1_Read
-                  0x001458                  _UART1_Write
-                  0x001482                  _UART1_IsRxReady
-                  0x001498                  _UART1_IsTxReady
-                  0x0014cc                  _UART1_IsTxDone
-                  0x00155c                  _UART1_ReadBuffer
-                  0x001596                  _UART1_WriteBuffer
-                  0x0015d0                  _UART1_TransferStatusGet
-                  0x001614                  _UART1_Peek
-                  0x001634                  _UART1_ReceiveBufferIsEmpty
-                  0x001644                  _UART1_TransmitBufferIsFull
-                  0x001654                  _UART1_StatusGet
-                  0x00165c                  _UART1_TransmitBufferSizeGet
-                  0x00168a                  _UART1_ReceiveBufferSizeGet
-                  0x0016b8                  _UART1_Enable
-                  0x0016c2                  _UART1_Disable
-                  0x0016cc                  _SPI1_Initialize
-                  0x0016de                  _SPI1_Exchange
-                  0x00170a                  _SPI1_ExchangeBuffer
-                  0x0017d4                  _SPI1_Exchange16bit
-                  0x0017e4                  _SPI1_Exchange16bitBuffer
-                  0x0017fa                  _SPI1_TransferModeGet
-                  0x001810                  _SPI1_StatusGet
-                  0x001818                  _spi2_close
-                  0x001820                  _spi2_open
-                  0x00187e                  _spi2_exchangeByte
-                  0x001898                  _spi2_exchangeBlock
-                  0x0018ca                  _spi2_writeBlock
-                  0x0018f8                  _spi2_readBlock
-                  0x001928                  _spi2_writeByte
-                  0x001934                  _spi2_readByte
-                  0x00193e                  _spi2_isr
-                  0x001958                  _spi2_setSpiISR
-                  0x001964                  __put
-                  0x001994                  _write
-                  0x0019c2                  _process_message
-                  0x001b08                  _TMR1_Initialize
-                  0x001b18                  _TMR1_Tasks_16BitOperation
-                  0x001b32                  _TMR1_Period16BitSet
-                  0x001b40                  _TMR1_Period16BitGet
-                  0x001b48                  _TMR1_Counter16BitSet
-                  0x001b56                  _TMR1_Counter16BitGet
-                  0x001b5e                  _TMR1_Start
-                  0x001b68                  _TMR1_Stop
-                  0x001b70                  _TMR1_GetElapsedThenClear
-                  0x001b86                  _TMR1_SoftwareCounterGet
-                  0x001b90                  _TMR1_SoftwareCounterClear
-                  0x001b98                  _CLOCK_Initialize
-                  0x001bca                  _PIN_MANAGER_Initialize
-                  0x001bf4                  _INTERRUPT_Initialize
-                  0x001c18                  _main
-                  0x001c34                  ___delay32
-                  0x001c68                  _SYSTEM_Initialize
+                  0x000ab2                  _DataExchange16bitTest
+                  0x000ac4                  _Intan_ReadREG
+                  0x000b0c                  _Intan_SPI_Test
+                  0x000bf2                  _Intan_WriteREG
+                  0x000c6e                  _Intan_Convert_Single
+                  0x000cb2                  _Intan_Convert_32
+                  0x000d06                  _Intan_ADC_Calibrate
+                  0x000d48                  _Intan_ADC_Clear
+                  0x000d58                  _Intan_REG_Initialization
+                  0x0010f8                  _Intan_Initialization
+                  0x00117a                  _READ_STATUS_REG
+                  0x0011aa                  _JEDECID
+                  0x0011f8                  _IS_BUSY
+                  0x001212                  _IS_WRITEABLE
+                  0x00122a                  _WRITE_ENABLE
+                  0x00123e                  _WRITE_DISABLE
+                  0x001252                  _READ_MEM
+                  0x0012e2                  _PAGE_PROGRAM
+                  0x00138c                  _LOCK_PROTECTION
+                  0x0013a2                  _UNLOCK_PROTECTION
+                  0x0013b8                  _SECTOR_ERASE
+                  0x001450                  _CHIP_ERASE
+                  0x00147c                  _TEST_COMM_MEM
+                  0x0014a4                  _TEST_WRITE_READ
+                  0x00158e                  _UART1_Initialize
+                  0x0015c2                  _UART1_SetTxInterruptHandler
+                  0x0015e0                  _UART1_SetRxInterruptHandler
+                  0x0015fe                  _UART1_Read
+                  0x00162a                  _UART1_Write
+                  0x001654                  _UART1_IsRxReady
+                  0x00166a                  _UART1_IsTxReady
+                  0x00169e                  _UART1_IsTxDone
+                  0x00172e                  _UART1_ReadBuffer
+                  0x001768                  _UART1_WriteBuffer
+                  0x0017a2                  _UART1_TransferStatusGet
+                  0x0017e6                  _UART1_Peek
+                  0x001806                  _UART1_ReceiveBufferIsEmpty
+                  0x001816                  _UART1_TransmitBufferIsFull
+                  0x001826                  _UART1_StatusGet
+                  0x00182e                  _UART1_TransmitBufferSizeGet
+                  0x00185c                  _UART1_ReceiveBufferSizeGet
+                  0x00188a                  _UART1_Enable
+                  0x001894                  _UART1_Disable
+                  0x00189e                  _SPI1_Initialize
+                  0x0018b0                  _SPI1_Exchange
+                  0x0018dc                  _SPI1_ExchangeBuffer
+                  0x0019a6                  _SPI1_Exchange16bit
+                  0x0019b6                  _SPI1_Exchange16bitBuffer
+                  0x0019cc                  _SPI1_TransferModeGet
+                  0x0019e2                  _SPI1_StatusGet
+                  0x0019ea                  _spi2_close
+                  0x0019f2                  _spi2_open
+                  0x001a50                  _spi2_exchangeByte
+                  0x001a6a                  _spi2_exchangeBlock
+                  0x001a9c                  _spi2_writeBlock
+                  0x001aca                  _spi2_readBlock
+                  0x001afa                  _spi2_writeByte
+                  0x001b06                  _spi2_readByte
+                  0x001b10                  _spi2_isr
+                  0x001b2a                  _spi2_setSpiISR
+                  0x001b36                  __put
+                  0x001b66                  _write
+                  0x001b94                  _process_message
+                  0x001cd4                  _TMR1_Initialize
+                  0x001ce4                  _TMR1_Tasks_16BitOperation
+                  0x001cfe                  _TMR1_Period16BitSet
+                  0x001d0c                  _TMR1_Period16BitGet
+                  0x001d14                  _TMR1_Counter16BitSet
+                  0x001d22                  _TMR1_Counter16BitGet
+                  0x001d2a                  _TMR1_Start
+                  0x001d34                  _TMR1_Stop
+                  0x001d3c                  _TMR1_GetElapsedThenClear
+                  0x001d52                  _TMR1_SoftwareCounterGet
+                  0x001d5c                  _TMR1_SoftwareCounterClear
+                  0x001d64                  _CLOCK_Initialize
+                  0x001d96                  _PIN_MANAGER_Initialize
+                  0x001dc0                  _INTERRUPT_Initialize
+                  0x001de4                  _main
+                  0x001e04                  ___delay32
+                  0x001e38                  _SYSTEM_Initialize
                   0xf80000                  __FBS.sec
                   0xf80004                  __FGS.sec
 
 External Symbols in Program Memory (by name):
 
-                  0x001388                  _CHIP_ERASE
-                  0x001b98                  _CLOCK_Initialize
-                  0x000ae4                  _DataExchange16bitTest
-                  0x001bf4                  _INTERRUPT_Initialize
-                  0x001114                  _IS_BUSY
-                  0x00112e                  _IS_WRITEABLE
-                  0x000ca2                  _Intan_ADC_Calibrate
-                  0x000ce4                  _Intan_ADC_Clear
-                  0x000c50                  _Intan_Convert_32
-                  0x000c0c                  _Intan_Convert_Single
-                  0x001086                  _Intan_Initialization
-                  0x000cf4                  _Intan_REG_Initialization
-                  0x000af6                  _Intan_ReadREG
-                  0x000b3e                  _Intan_SPI_Test
-                  0x000b88                  _Intan_WriteREG
-                  0x0010c6                  _JEDECID
-                  0x0012cc                  _LOCK_PROTECTION
-                  0x001204                  _PAGE_PROGRAM
-                  0x001bca                  _PIN_MANAGER_Initialize
-                  0x001174                  _READ_MEM
-                  0x00109a                  _READ_STATUS_REG
-                  0x001304                  _SECTOR_ERASE
-                  0x0016de                  _SPI1_Exchange
-                  0x0017d4                  _SPI1_Exchange16bit
-                  0x0017e4                  _SPI1_Exchange16bitBuffer
-                  0x00170a                  _SPI1_ExchangeBuffer
-                  0x0016cc                  _SPI1_Initialize
-                  0x001810                  _SPI1_StatusGet
-                  0x0017fa                  _SPI1_TransferModeGet
-                  0x001c68                  _SYSTEM_Initialize
-                  0x001b56                  _TMR1_Counter16BitGet
-                  0x001b48                  _TMR1_Counter16BitSet
-                  0x001b70                  _TMR1_GetElapsedThenClear
-                  0x001b08                  _TMR1_Initialize
-                  0x001b40                  _TMR1_Period16BitGet
-                  0x001b32                  _TMR1_Period16BitSet
-                  0x001b90                  _TMR1_SoftwareCounterClear
-                  0x001b86                  _TMR1_SoftwareCounterGet
-                  0x001b5e                  _TMR1_Start
-                  0x001b68                  _TMR1_Stop
-                  0x001b18                  _TMR1_Tasks_16BitOperation
-                  0x0016c2                  _UART1_Disable
-                  0x0016b8                  _UART1_Enable
-                  0x0013bc                  _UART1_Initialize
-                  0x001482                  _UART1_IsRxReady
-                  0x0014cc                  _UART1_IsTxDone
-                  0x001498                  _UART1_IsTxReady
-                  0x001614                  _UART1_Peek
-                  0x00142c                  _UART1_Read
-                  0x00155c                  _UART1_ReadBuffer
-                  0x001634                  _UART1_ReceiveBufferIsEmpty
-                  0x00168a                  _UART1_ReceiveBufferSizeGet
-                  0x00140e                  _UART1_SetRxInterruptHandler
-                  0x0013f0                  _UART1_SetTxInterruptHandler
-                  0x001654                  _UART1_StatusGet
-                  0x0015d0                  _UART1_TransferStatusGet
-                  0x001644                  _UART1_TransmitBufferIsFull
-                  0x00165c                  _UART1_TransmitBufferSizeGet
-                  0x001458                  _UART1_Write
-                  0x001596                  _UART1_WriteBuffer
-                  0x0012e8                  _UNLOCK_PROTECTION
-                  0x00115a                  _WRITE_DISABLE
-                  0x001146                  _WRITE_ENABLE
+                  0x001450                  _CHIP_ERASE
+                  0x001d64                  _CLOCK_Initialize
+                  0x000ab2                  _DataExchange16bitTest
+                  0x001dc0                  _INTERRUPT_Initialize
+                  0x0011f8                  _IS_BUSY
+                  0x001212                  _IS_WRITEABLE
+                  0x000d06                  _Intan_ADC_Calibrate
+                  0x000d48                  _Intan_ADC_Clear
+                  0x000cb2                  _Intan_Convert_32
+                  0x000c6e                  _Intan_Convert_Single
+                  0x0010f8                  _Intan_Initialization
+                  0x000d58                  _Intan_REG_Initialization
+                  0x000ac4                  _Intan_ReadREG
+                  0x000b0c                  _Intan_SPI_Test
+                  0x000bf2                  _Intan_WriteREG
+                  0x0011aa                  _JEDECID
+                  0x00138c                  _LOCK_PROTECTION
+                  0x0012e2                  _PAGE_PROGRAM
+                  0x001d96                  _PIN_MANAGER_Initialize
+                  0x001252                  _READ_MEM
+                  0x00117a                  _READ_STATUS_REG
+                  0x0013b8                  _SECTOR_ERASE
+                  0x0018b0                  _SPI1_Exchange
+                  0x0019a6                  _SPI1_Exchange16bit
+                  0x0019b6                  _SPI1_Exchange16bitBuffer
+                  0x0018dc                  _SPI1_ExchangeBuffer
+                  0x00189e                  _SPI1_Initialize
+                  0x0019e2                  _SPI1_StatusGet
+                  0x0019cc                  _SPI1_TransferModeGet
+                  0x001e38                  _SYSTEM_Initialize
+                  0x00147c                  _TEST_COMM_MEM
+                  0x0014a4                  _TEST_WRITE_READ
+                  0x001d22                  _TMR1_Counter16BitGet
+                  0x001d14                  _TMR1_Counter16BitSet
+                  0x001d3c                  _TMR1_GetElapsedThenClear
+                  0x001cd4                  _TMR1_Initialize
+                  0x001d0c                  _TMR1_Period16BitGet
+                  0x001cfe                  _TMR1_Period16BitSet
+                  0x001d5c                  _TMR1_SoftwareCounterClear
+                  0x001d52                  _TMR1_SoftwareCounterGet
+                  0x001d2a                  _TMR1_Start
+                  0x001d34                  _TMR1_Stop
+                  0x001ce4                  _TMR1_Tasks_16BitOperation
+                  0x001894                  _UART1_Disable
+                  0x00188a                  _UART1_Enable
+                  0x00158e                  _UART1_Initialize
+                  0x001654                  _UART1_IsRxReady
+                  0x00169e                  _UART1_IsTxDone
+                  0x00166a                  _UART1_IsTxReady
+                  0x0017e6                  _UART1_Peek
+                  0x0015fe                  _UART1_Read
+                  0x00172e                  _UART1_ReadBuffer
+                  0x001806                  _UART1_ReceiveBufferIsEmpty
+                  0x00185c                  _UART1_ReceiveBufferSizeGet
+                  0x0015e0                  _UART1_SetRxInterruptHandler
+                  0x0015c2                  _UART1_SetTxInterruptHandler
+                  0x001826                  _UART1_StatusGet
+                  0x0017a2                  _UART1_TransferStatusGet
+                  0x001816                  _UART1_TransmitBufferIsFull
+                  0x00182e                  _UART1_TransmitBufferSizeGet
+                  0x00162a                  _UART1_Write
+                  0x001768                  _UART1_WriteBuffer
+                  0x0013a2                  _UNLOCK_PROTECTION
+                  0x00123e                  _WRITE_DISABLE
+                  0x00122a                  _WRITE_ENABLE
                   0x00031a                  __AddressError
                   0x000a20                  __Atexit
                   0x00095e                  __Closreg
@@ -421,7 +425,7 @@ External Symbols in Program Memory (by name):
                   0x00041c                  __U1ErrInterrupt
                   0x0003b6                  __U1RXInterrupt
                   0x00035a                  __U1TXInterrupt
-                  0x001c34                  ___delay32
+                  0x001e04                  ___delay32
                   0x00049e                  ___divsf3
                   0x000522                  ___eqsf2
                   0x000522                  ___lesf2
@@ -439,30 +443,30 @@ External Symbols in Program Memory (by name):
                   0x0005d8                  __funpack
                   0x000572                  __funpack2
                   0x00023c                  __psv_init
-                  0x001964                  __put
+                  0x001b36                  __put
                   0x000200                  __resetPRI
                   0x000970                  _fclose
                   0x000758                  _fputc
                   0x00081c                  _fputs
                   0x000602                  _free
-                  0x001c18                  _main
+                  0x001de4                  _main
                   0x0006cc                  _malloc
                   0x000720                  _memcpy
-                  0x0019c2                  _process_message
+                  0x001b94                  _process_message
                   0x00072e                  _puts
-                  0x001818                  _spi2_close
-                  0x001898                  _spi2_exchangeBlock
-                  0x00187e                  _spi2_exchangeByte
-                  0x00193e                  _spi2_isr
-                  0x001820                  _spi2_open
-                  0x0018f8                  _spi2_readBlock
-                  0x001934                  _spi2_readByte
-                  0x001958                  _spi2_setSpiISR
-                  0x0018ca                  _spi2_writeBlock
-                  0x001928                  _spi2_writeByte
+                  0x0019ea                  _spi2_close
+                  0x001a6a                  _spi2_exchangeBlock
+                  0x001a50                  _spi2_exchangeByte
+                  0x001b10                  _spi2_isr
+                  0x0019f2                  _spi2_open
+                  0x001aca                  _spi2_readBlock
+                  0x001b06                  _spi2_readByte
+                  0x001b2a                  _spi2_setSpiISR
+                  0x001a9c                  _spi2_writeBlock
+                  0x001afa                  _spi2_writeByte
                   0x0008ac                  _strlen
                   0x0008b8                  _strrchr
-                  0x001994                  _write
+                  0x001b66                  _write
                   0x000a00                  fclose.XX_elo:_closeall
 
 Memory Configuration
@@ -639,12 +643,12 @@ usercode
 
 __FBS             0xf80000          0x2
  *(__FBS.sec*)
- __FBS.sec        0xf80000          0x2 /CW/_FBS*ô
+ __FBS.sec        0xf80000          0x2 /CW/_FBS(`#
                   0xf80000                  __FBS.sec
 
 __FGS             0xf80004          0x2
  *(__FGS.sec*)
- __FGS.sec        0xf80004          0x2 /CW/_FGS¨hó
+ __FGS.sec        0xf80004          0x2 /CW/_FGSŸ"
                   0xf80004                  __FGS.sec
 
 __FOSCSEL
@@ -669,7 +673,7 @@ __FDS
  *(.comment)
  .comment         0x000000         0x5e /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xfiles.XX_eo)
 
-.debug_info       0x000000       0x5840
+.debug_info       0x000000       0x5c02
  *(.debug_info)
  .debug_info      0x000000        0x928 build/default/production/mcc_generated_files/spi1.o
  .debug_info      0x000928        0x324 build/default/production/mcc_generated_files/system.o
@@ -679,14 +683,14 @@ __FDS
  .debug_info      0x001831        0x329 build/default/production/mcc_generated_files/pin_manager.o
  .debug_info      0x001b5a       0x103a build/default/production/mcc_generated_files/uart1.o
  .debug_info      0x002b94        0x715 build/default/production/mcc_generated_files/tmr1.o
- .debug_info      0x0032a9        0x31d build/default/production/main.o
- .debug_info      0x0035c6        0xc17 build/default/production/Intan_RHD2132.o
- .debug_info      0x0041dd        0x411 build/default/production/Comm.o
- .debug_info      0x0045ee        0xacc build/default/production/mcc_generated_files/spi2_driver.o
- .debug_info      0x0050ba        0x786 build/default/production/SST26VF016B.o
+ .debug_info      0x0032a9        0x56b build/default/production/main.o
+ .debug_info      0x003814        0xc7a build/default/production/Intan_RHD2132.o
+ .debug_info      0x00448e        0x3b2 build/default/production/Comm.o
+ .debug_info      0x004840        0xacc build/default/production/mcc_generated_files/spi2_driver.o
+ .debug_info      0x00530c        0x8f6 build/default/production/SST26VF016B.o
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000        0xdee
+.debug_abbrev     0x000000        0xde7
  *(.debug_abbrev)
  .debug_abbrev    0x000000        0x158 build/default/production/mcc_generated_files/spi1.o
  .debug_abbrev    0x000158         0xb4 build/default/production/mcc_generated_files/system.o
@@ -698,12 +702,12 @@ __FDS
  .debug_abbrev    0x000491        0x21c build/default/production/mcc_generated_files/uart1.o
  .debug_abbrev    0x0006ad        0x148 build/default/production/mcc_generated_files/tmr1.o
  .debug_abbrev    0x0007f5         0xcc build/default/production/main.o
- .debug_abbrev    0x0008c1        0x15b build/default/production/Intan_RHD2132.o
- .debug_abbrev    0x000a1c         0xef build/default/production/Comm.o
- .debug_abbrev    0x000b0b        0x1bd build/default/production/mcc_generated_files/spi2_driver.o
- .debug_abbrev    0x000cc8        0x126 build/default/production/SST26VF016B.o
+ .debug_abbrev    0x0008c1        0x15d build/default/production/Intan_RHD2132.o
+ .debug_abbrev    0x000a1e         0xdd build/default/production/Comm.o
+ .debug_abbrev    0x000afb        0x1bd build/default/production/mcc_generated_files/spi2_driver.o
+ .debug_abbrev    0x000cb8        0x12f build/default/production/SST26VF016B.o
 
-.debug_line       0x000000       0x10e1
+.debug_line       0x000000       0x1120
  *(.debug_line)
  .debug_line      0x000000        0x155 build/default/production/mcc_generated_files/spi1.o
  .debug_line      0x000155        0x10a build/default/production/mcc_generated_files/system.o
@@ -714,13 +718,13 @@ __FDS
  .debug_line      0x0005ca        0x116 build/default/production/mcc_generated_files/pin_manager.o
  .debug_line      0x0006e0        0x1f0 build/default/production/mcc_generated_files/uart1.o
  .debug_line      0x0008d0        0x12d build/default/production/mcc_generated_files/tmr1.o
- .debug_line      0x0009fd        0x119 build/default/production/main.o
- .debug_line      0x000b16        0x1d3 build/default/production/Intan_RHD2132.o
- .debug_line      0x000ce9        0x11f build/default/production/Comm.o
- .debug_line      0x000e08        0x165 build/default/production/mcc_generated_files/spi2_driver.o
- .debug_line      0x000f6d        0x174 build/default/production/SST26VF016B.o
+ .debug_line      0x0009fd        0x11b build/default/production/main.o
+ .debug_line      0x000b18        0x1e8 build/default/production/Intan_RHD2132.o
+ .debug_line      0x000d00        0x124 build/default/production/Comm.o
+ .debug_line      0x000e24        0x165 build/default/production/mcc_generated_files/spi2_driver.o
+ .debug_line      0x000f89        0x197 build/default/production/SST26VF016B.o
 
-.debug_frame      0x000000        0xb1a
+.debug_frame      0x000000        0xb56
  *(.debug_frame)
  .debug_frame     0x000000         0xca build/default/production/mcc_generated_files/spi1.o
  .debug_frame     0x0000ca         0x2e build/default/production/mcc_generated_files/system.o
@@ -734,9 +738,9 @@ __FDS
  .debug_frame     0x00072c        0x120 build/default/production/Intan_RHD2132.o
  .debug_frame     0x00084c         0x62 build/default/production/Comm.o
  .debug_frame     0x0008ae        0x118 build/default/production/mcc_generated_files/spi2_driver.o
- .debug_frame     0x0009c6        0x154 build/default/production/SST26VF016B.o
+ .debug_frame     0x0009c6        0x190 build/default/production/SST26VF016B.o
 
-.debug_str        0x000000        0x21b
+.debug_str        0x000000        0x238
  *(.debug_str)
  .debug_str       0x000000         0x5a build/default/production/mcc_generated_files/spi1.o
  .debug_str       0x00005a          0xc build/default/production/mcc_generated_files/system.o
@@ -744,11 +748,11 @@ __FDS
  .debug_str       0x000072         0x1c build/default/production/mcc_generated_files/interrupt_manager.o
  .debug_str       0x00008e         0xac build/default/production/mcc_generated_files/uart1.o
  .debug_str       0x00013a         0x13 build/default/production/mcc_generated_files/tmr1.o
- .debug_str       0x00014d          0xc build/default/production/main.o
- .debug_str       0x000159         0x23 build/default/production/Intan_RHD2132.o
- .debug_str       0x00017c          0xc build/default/production/Comm.o
- .debug_str       0x000188         0x67 build/default/production/mcc_generated_files/spi2_driver.o
- .debug_str       0x0001ef         0x2c build/default/production/SST26VF016B.o
+ .debug_str       0x00014d         0x1e build/default/production/main.o
+ .debug_str       0x00016b         0x2e build/default/production/Intan_RHD2132.o
+ .debug_str       0x000199          0xc build/default/production/Comm.o
+ .debug_str       0x0001a5         0x67 build/default/production/mcc_generated_files/spi2_driver.o
+ .debug_str       0x00020c         0x2c build/default/production/SST26VF016B.o
 
 .debug_loc
  *(.debug_loc)
@@ -757,7 +761,7 @@ __FDS
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0x868
+                  0x000000        0x88e
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0xb0 build/default/production/mcc_generated_files/spi1.o
@@ -784,7 +788,7 @@ __FDS
  .debug_pubnames
                   0x0006ac         0xe2 build/default/production/mcc_generated_files/spi2_driver.o
  .debug_pubnames
-                  0x00078e         0xda build/default/production/SST26VF016B.o
+                  0x00078e        0x100 build/default/production/SST26VF016B.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -1432,14 +1436,14 @@ LOAD /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a
 LOAD /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a
 END GROUP
 OUTPUT(dist/default/production/RHD2132.X.production.elf elf32-pic30)
-LOAD /CW/_FGS¨hó
-LOAD /CW/_FBS*ô
+LOAD /CW/_FGSŸ"
+LOAD /CW/_FBS(`#
 LOAD jump_table
 LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000138        0x5a5
+                  0x000138        0x5df
  .debug_pubtypes
                   0x000138         0x9c build/default/production/mcc_generated_files/spi1.o
  .debug_pubtypes
@@ -1457,104 +1461,104 @@ LOAD data_init
  .debug_pubtypes
                   0x000402         0x87 build/default/production/mcc_generated_files/tmr1.o
  .debug_pubtypes
-                  0x000489         0x42 build/default/production/main.o
+                  0x000489         0x7c build/default/production/main.o
  .debug_pubtypes
-                  0x0004cb         0x5f build/default/production/Intan_RHD2132.o
+                  0x000505         0x5f build/default/production/Intan_RHD2132.o
  .debug_pubtypes
-                  0x00052a         0x4e build/default/production/Comm.o
+                  0x000564         0x4e build/default/production/Comm.o
  .debug_pubtypes
-                  0x000578         0xed build/default/production/mcc_generated_files/spi2_driver.o
+                  0x0005b2         0xed build/default/production/mcc_generated_files/spi2_driver.o
  .debug_pubtypes
-                  0x000665         0x78 build/default/production/SST26VF016B.o
+                  0x00069f         0x78 build/default/production/SST26VF016B.o
 
 __c30_signature
-                  0x0006dd        0x102
+                  0x000717        0x102
  __c30_signature
-                  0x0006dd          0x6 build/default/production/mcc_generated_files/spi1.o
+                  0x000717          0x6 build/default/production/mcc_generated_files/spi1.o
  __c30_signature
-                  0x0006e3          0x6 build/default/production/mcc_generated_files/system.o
+                  0x00071d          0x6 build/default/production/mcc_generated_files/system.o
  __c30_signature
-                  0x0006e9          0x6 build/default/production/mcc_generated_files/clock.o
+                  0x000723          0x6 build/default/production/mcc_generated_files/clock.o
  __c30_signature
-                  0x0006ef          0x6 build/default/production/mcc_generated_files/traps.o
+                  0x000729          0x6 build/default/production/mcc_generated_files/traps.o
  __c30_signature
-                  0x0006f5          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x00072f          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
  __c30_signature
-                  0x0006fb          0x6 build/default/production/mcc_generated_files/mcc.o
+                  0x000735          0x6 build/default/production/mcc_generated_files/mcc.o
  __c30_signature
-                  0x000701          0x6 build/default/production/mcc_generated_files/pin_manager.o
+                  0x00073b          0x6 build/default/production/mcc_generated_files/pin_manager.o
  __c30_signature
-                  0x000707          0x6 build/default/production/mcc_generated_files/uart1.o
+                  0x000741          0x6 build/default/production/mcc_generated_files/uart1.o
  __c30_signature
-                  0x00070d          0x6 build/default/production/mcc_generated_files/tmr1.o
+                  0x000747          0x6 build/default/production/mcc_generated_files/tmr1.o
  __c30_signature
-                  0x000713          0x6 build/default/production/main.o
+                  0x00074d          0x6 build/default/production/main.o
  __c30_signature
-                  0x000719          0x6 build/default/production/Intan_RHD2132.o
+                  0x000753          0x6 build/default/production/Intan_RHD2132.o
  __c30_signature
-                  0x00071f          0x6 build/default/production/Comm.o
+                  0x000759          0x6 build/default/production/Comm.o
  __c30_signature
-                  0x000725          0x6 build/default/production/mcc_generated_files/spi2_driver.o
+                  0x00075f          0x6 build/default/production/mcc_generated_files/spi2_driver.o
  __c30_signature
-                  0x00072b          0x6 build/default/production/SST26VF016B.o
+                  0x000765          0x6 build/default/production/SST26VF016B.o
  __c30_signature
-                  0x000731          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(crt0_standard.o)
+                  0x00076b          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(crt0_standard.o)
  __c30_signature
-                  0x000737          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(data_init_standard.o)
+                  0x000771          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(data_init_standard.o)
  __c30_signature
-                  0x00073d          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(delay32.Leo)
+                  0x000777          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(delay32.Leo)
  __c30_signature
-                  0x000743          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(divsf3.eo)
+                  0x00077d          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(divsf3.eo)
  __c30_signature
-                  0x000749          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(feqltle.eo)
+                  0x000783          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(feqltle.eo)
  __c30_signature
-                  0x00074f          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(fpack.eo)
+                  0x000789          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(fpack.eo)
  __c30_signature
-                  0x000755          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(funpack2.eo)
+                  0x00078f          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(funpack2.eo)
  __c30_signature
-                  0x00075b          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(futil.eo)
+                  0x000795          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(futil.eo)
  __c30_signature
-                  0x000761          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(fcompare.eo)
+                  0x00079b          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(fcompare.eo)
  __c30_signature
-                  0x000767          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(funpack.eo)
+                  0x0007a1          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(funpack.eo)
  __c30_signature
-                  0x00076d          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(free.XX_eo)
+                  0x0007a7          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(free.XX_eo)
  __c30_signature
-                  0x000773          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(malloc.XX_eo)
+                  0x0007ad          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(malloc.XX_eo)
  __c30_signature
-                  0x000779          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(memcpy.XX_eo)
+                  0x0007b3          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(memcpy.XX_eo)
  __c30_signature
-                  0x00077f          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(puts.XX_eo)
+                  0x0007b9          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(puts.XX_eo)
  __c30_signature
-                  0x000785          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xfiles.XX_eo)
+                  0x0007bf          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xfiles.XX_eo)
  __c30_signature
-                  0x00078b          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xgetmem.XX_eo)
+                  0x0007c5          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xgetmem.XX_eo)
  __c30_signature
-                  0x000791          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fputc.XX_elo)
+                  0x0007cb          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fputc.XX_elo)
  __c30_signature
-                  0x000797          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fflush.XX_eo)
+                  0x0007d1          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fflush.XX_eo)
  __c30_signature
-                  0x00079d          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fputs.XX_eo)
+                  0x0007d7          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fputs.XX_eo)
  __c30_signature
-                  0x0007a3          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(strlen.XX_eo)
+                  0x0007dd          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(strlen.XX_eo)
  __c30_signature
-                  0x0007a9          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(strrchr.XX_eo)
+                  0x0007e3          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(strrchr.XX_eo)
  __c30_signature
-                  0x0007af          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xfwprep.XX_eo)
+                  0x0007e9          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xfwprep.XX_eo)
  __c30_signature
-                  0x0007b5          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fclose.XX_elo)
+                  0x0007ef          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(fclose.XX_elo)
  __c30_signature
-                  0x0007bb          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xatexit.XX_elo)
+                  0x0007f5          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-c-elf.a(xatexit.XX_elo)
  __c30_signature
-                  0x0007c1          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(close.Leo)
+                  0x0007fb          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(close.Leo)
  __c30_signature
-                  0x0007c7          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(remove.Leo)
+                  0x000801          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(remove.Leo)
  __c30_signature
-                  0x0007cd          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(sbrk.Leo)
+                  0x000807          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(sbrk.Leo)
  __c30_signature
-                  0x0007d3          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(brk.Lelo)
+                  0x00080d          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(brk.Lelo)
  __c30_signature
-                  0x0007d9          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
+                  0x000813          0x6 /opt/microchip/xc16/v1.50/bin/bin/../../lib/libm-elf.a(mulsi3.eo)
 
 .nbss               0x0800         0x40
  .nbss              0x0800         0x20 build/default/production/mcc_generated_files/traps.o
@@ -1646,113 +1650,115 @@ __c30_signature
  .ivt._U1ErrInterrupt
                   0x000096          0x2 build/default/production/mcc_generated_files/uart1.o
 
-.const              0x8a4c         0x98 load address 0x000a4c  
- .const             0x8a4c         0x74 build/default/production/Intan_RHD2132.o
- .const             0x8ac0         0x1c build/default/production/Comm.o
- .const             0x8adc          0x8 build/default/production/mcc_generated_files/spi2_driver.o
+.const              0x8a4c         0x66 load address 0x000a4c  
+ .const             0x8a4c         0x4a build/default/production/Intan_RHD2132.o
+ .const             0x8a96         0x14 build/default/production/Comm.o
+ .const             0x8aaa          0x8 build/default/production/mcc_generated_files/spi2_driver.o
 
-.text             0x000ae4        0xf86
- .text            0x000ae4        0x5b6 build/default/production/Intan_RHD2132.o
-                  0x000ae4                  _DataExchange16bitTest
-                  0x000af6                  _Intan_ReadREG
-                  0x000b3e                  _Intan_SPI_Test
-                  0x000b88                  _Intan_WriteREG
-                  0x000c0c                  _Intan_Convert_Single
-                  0x000c50                  _Intan_Convert_32
-                  0x000ca2                  _Intan_ADC_Calibrate
-                  0x000ce4                  _Intan_ADC_Clear
-                  0x000cf4                  _Intan_REG_Initialization
-                  0x001086                  _Intan_Initialization
- .text            0x00109a        0x322 build/default/production/SST26VF016B.o
-                  0x00109a                  _READ_STATUS_REG
-                  0x0010c6                  _JEDECID
-                  0x001114                  _IS_BUSY
-                  0x00112e                  _IS_WRITEABLE
-                  0x001146                  _WRITE_ENABLE
-                  0x00115a                  _WRITE_DISABLE
-                  0x001174                  _READ_MEM
-                  0x001204                  _PAGE_PROGRAM
-                  0x0012cc                  _LOCK_PROTECTION
-                  0x0012e8                  _UNLOCK_PROTECTION
-                  0x001304                  _SECTOR_ERASE
-                  0x001388                  _CHIP_ERASE
- .text            0x0013bc        0x310 build/default/production/mcc_generated_files/uart1.o
-                  0x0013bc                  _UART1_Initialize
-                  0x0013f0                  _UART1_SetTxInterruptHandler
-                  0x001408                  _UART1_Transmit_CallBack
-                  0x00140e                  _UART1_SetRxInterruptHandler
-                  0x001426                  _UART1_Receive_CallBack
-                  0x00142c                  _UART1_Read
-                  0x001458                  _UART1_Write
-                  0x001482                  _UART1_IsRxReady
-                  0x001498                  _UART1_IsTxReady
-                  0x0014cc                  _UART1_IsTxDone
-                  0x00155c                  _UART1_ReadBuffer
-                  0x001596                  _UART1_WriteBuffer
-                  0x0015d0                  _UART1_TransferStatusGet
-                  0x001614                  _UART1_Peek
-                  0x001634                  _UART1_ReceiveBufferIsEmpty
-                  0x001644                  _UART1_TransmitBufferIsFull
-                  0x001654                  _UART1_StatusGet
-                  0x00165c                  _UART1_TransmitBufferSizeGet
-                  0x00168a                  _UART1_ReceiveBufferSizeGet
-                  0x0016b8                  _UART1_Enable
-                  0x0016c2                  _UART1_Disable
- .text            0x0016cc        0x14c build/default/production/mcc_generated_files/spi1.o
-                  0x0016cc                  _SPI1_Initialize
-                  0x0016de                  _SPI1_Exchange
-                  0x00170a                  _SPI1_ExchangeBuffer
-                  0x0017d4                  _SPI1_Exchange16bit
-                  0x0017e4                  _SPI1_Exchange16bitBuffer
-                  0x0017fa                  _SPI1_TransferModeGet
-                  0x001810                  _SPI1_StatusGet
- .text            0x001818        0x14c build/default/production/mcc_generated_files/spi2_driver.o
-                  0x001818                  _spi2_close
-                  0x001820                  _spi2_open
-                  0x00187e                  _spi2_exchangeByte
-                  0x001898                  _spi2_exchangeBlock
-                  0x0018ca                  _spi2_writeBlock
-                  0x0018f8                  _spi2_readBlock
-                  0x001928                  _spi2_writeByte
-                  0x001934                  _spi2_readByte
-                  0x00193e                  _spi2_isr
-                  0x001958                  _spi2_setSpiISR
- .text            0x001964        0x106 build/default/production/Comm.o
-                  0x001964                  __put
-                  0x001994                  _write
-                  0x0019c2                  _process_message
+.text             0x000ab2       0x1184
+ .text            0x000ab2        0x6c8 build/default/production/Intan_RHD2132.o
+                  0x000ab2                  _DataExchange16bitTest
+                  0x000ac4                  _Intan_ReadREG
+                  0x000b0c                  _Intan_SPI_Test
+                  0x000bf2                  _Intan_WriteREG
+                  0x000c6e                  _Intan_Convert_Single
+                  0x000cb2                  _Intan_Convert_32
+                  0x000d06                  _Intan_ADC_Calibrate
+                  0x000d48                  _Intan_ADC_Clear
+                  0x000d58                  _Intan_REG_Initialization
+                  0x0010f8                  _Intan_Initialization
+ .text            0x00117a        0x414 build/default/production/SST26VF016B.o
+                  0x00117a                  _READ_STATUS_REG
+                  0x0011aa                  _JEDECID
+                  0x0011f8                  _IS_BUSY
+                  0x001212                  _IS_WRITEABLE
+                  0x00122a                  _WRITE_ENABLE
+                  0x00123e                  _WRITE_DISABLE
+                  0x001252                  _READ_MEM
+                  0x0012e2                  _PAGE_PROGRAM
+                  0x00138c                  _LOCK_PROTECTION
+                  0x0013a2                  _UNLOCK_PROTECTION
+                  0x0013b8                  _SECTOR_ERASE
+                  0x001450                  _CHIP_ERASE
+                  0x00147c                  _TEST_COMM_MEM
+                  0x0014a4                  _TEST_WRITE_READ
+ .text            0x00158e        0x310 build/default/production/mcc_generated_files/uart1.o
+                  0x00158e                  _UART1_Initialize
+                  0x0015c2                  _UART1_SetTxInterruptHandler
+                  0x0015da                  _UART1_Transmit_CallBack
+                  0x0015e0                  _UART1_SetRxInterruptHandler
+                  0x0015f8                  _UART1_Receive_CallBack
+                  0x0015fe                  _UART1_Read
+                  0x00162a                  _UART1_Write
+                  0x001654                  _UART1_IsRxReady
+                  0x00166a                  _UART1_IsTxReady
+                  0x00169e                  _UART1_IsTxDone
+                  0x00172e                  _UART1_ReadBuffer
+                  0x001768                  _UART1_WriteBuffer
+                  0x0017a2                  _UART1_TransferStatusGet
+                  0x0017e6                  _UART1_Peek
+                  0x001806                  _UART1_ReceiveBufferIsEmpty
+                  0x001816                  _UART1_TransmitBufferIsFull
+                  0x001826                  _UART1_StatusGet
+                  0x00182e                  _UART1_TransmitBufferSizeGet
+                  0x00185c                  _UART1_ReceiveBufferSizeGet
+                  0x00188a                  _UART1_Enable
+                  0x001894                  _UART1_Disable
+ .text            0x00189e        0x14c build/default/production/mcc_generated_files/spi1.o
+                  0x00189e                  _SPI1_Initialize
+                  0x0018b0                  _SPI1_Exchange
+                  0x0018dc                  _SPI1_ExchangeBuffer
+                  0x0019a6                  _SPI1_Exchange16bit
+                  0x0019b6                  _SPI1_Exchange16bitBuffer
+                  0x0019cc                  _SPI1_TransferModeGet
+                  0x0019e2                  _SPI1_StatusGet
+ .text            0x0019ea        0x14c build/default/production/mcc_generated_files/spi2_driver.o
+                  0x0019ea                  _spi2_close
+                  0x0019f2                  _spi2_open
+                  0x001a50                  _spi2_exchangeByte
+                  0x001a6a                  _spi2_exchangeBlock
+                  0x001a9c                  _spi2_writeBlock
+                  0x001aca                  _spi2_readBlock
+                  0x001afa                  _spi2_writeByte
+                  0x001b06                  _spi2_readByte
+                  0x001b10                  _spi2_isr
+                  0x001b2a                  _spi2_setSpiISR
+ .text            0x001b36        0x100 build/default/production/Comm.o
+                  0x001b36                  __put
+                  0x001b66                  _write
+                  0x001b94                  _process_message
 
-.dinit            0x001a6a         0x9e
- .dinit           0x001a6a         0x9e data_init
+.dinit            0x001c36         0x9e
+ .dinit           0x001c36         0x9e data_init
 
-.text             0x001b08        0x12c
- .text            0x001b08         0x90 build/default/production/mcc_generated_files/tmr1.o
-                  0x001b08                  _TMR1_Initialize
-                  0x001b18                  _TMR1_Tasks_16BitOperation
-                  0x001b32                  _TMR1_Period16BitSet
-                  0x001b40                  _TMR1_Period16BitGet
-                  0x001b48                  _TMR1_Counter16BitSet
-                  0x001b56                  _TMR1_Counter16BitGet
-                  0x001b5e                  _TMR1_Start
-                  0x001b68                  _TMR1_Stop
-                  0x001b70                  _TMR1_GetElapsedThenClear
-                  0x001b86                  _TMR1_SoftwareCounterGet
-                  0x001b90                  _TMR1_SoftwareCounterClear
- .text            0x001b98         0x32 build/default/production/mcc_generated_files/clock.o
-                  0x001b98                  _CLOCK_Initialize
- .text            0x001bca         0x2a build/default/production/mcc_generated_files/pin_manager.o
-                  0x001bca                  _PIN_MANAGER_Initialize
- .text            0x001bf4         0x24 build/default/production/mcc_generated_files/interrupt_manager.o
-                  0x001bf4                  _INTERRUPT_Initialize
- .text            0x001c18         0x1c build/default/production/main.o
-                  0x001c18                  _main
+.text             0x001cd4        0x130
+ .text            0x001cd4         0x90 build/default/production/mcc_generated_files/tmr1.o
+                  0x001cd4                  _TMR1_Initialize
+                  0x001ce4                  _TMR1_Tasks_16BitOperation
+                  0x001cfe                  _TMR1_Period16BitSet
+                  0x001d0c                  _TMR1_Period16BitGet
+                  0x001d14                  _TMR1_Counter16BitSet
+                  0x001d22                  _TMR1_Counter16BitGet
+                  0x001d2a                  _TMR1_Start
+                  0x001d34                  _TMR1_Stop
+                  0x001d3c                  _TMR1_GetElapsedThenClear
+                  0x001d52                  _TMR1_SoftwareCounterGet
+                  0x001d5c                  _TMR1_SoftwareCounterClear
+ .text            0x001d64         0x32 build/default/production/mcc_generated_files/clock.o
+                  0x001d64                  _CLOCK_Initialize
+ .text            0x001d96         0x2a build/default/production/mcc_generated_files/pin_manager.o
+                  0x001d96                  _PIN_MANAGER_Initialize
+ .text            0x001dc0         0x24 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x001dc0                  _INTERRUPT_Initialize
+ .text            0x001de4         0x20 build/default/production/main.o
+                  0x001de4                  _main
 
-.init.delay32     0x001c34         0x1c
- .init.delay32    0x001c34         0x1c /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(delay32.Leo)
-                  0x001c34                  ___delay32
+.init.delay32     0x001e04         0x1c
+ .init.delay32    0x001e04         0x1c /opt/microchip/xc16/v1.50/bin/bin/../../lib/liblega-pic30-elf.a(delay32.Leo)
+                  0x001e04                  ___delay32
 
-.text             0x001c50         0x2a
- .text            0x001c50         0x18 build/default/production/mcc_generated_files/traps.o
-                  0x001c50                  _TRAPS_halt_on_error
- .text            0x001c68         0x12 build/default/production/mcc_generated_files/system.o
-                  0x001c68                  _SYSTEM_Initialize
+.text             0x001e20         0x2a
+ .text            0x001e20         0x18 build/default/production/mcc_generated_files/traps.o
+                  0x001e20                  _TRAPS_halt_on_error
+ .text            0x001e38         0x12 build/default/production/mcc_generated_files/system.o
+                  0x001e38                  _SYSTEM_Initialize

@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-void _put(uint8_t *pt);
-void write(uint8_t *pt, uint8_t length);
+void _put(char *pt);
+void write(char *pt, uint8_t length);
 void process_message(void);
 
 #ifdef	__cplusplus

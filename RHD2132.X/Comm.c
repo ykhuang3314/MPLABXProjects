@@ -4,9 +4,9 @@
 #include "SST26VF016B.h"
 
 
-void _put(uint8_t *pt)
+void _put(char *pt)
 {
-    unsigned char index;
+    uint8_t index;
     index = 0;
     while(pt[index]){
         while(!UART1_IsTxReady());
@@ -14,7 +14,7 @@ void _put(uint8_t *pt)
     }
 }
 
-void write(uint8_t *pt, uint8_t length){
+void write(char *pt, uint8_t length){
     int i; 
     for(i=0; i<length; i++)
     {
@@ -26,46 +26,53 @@ void write(uint8_t *pt, uint8_t length){
 void process_message(void)
 {
     uint8_t message;
-    uint16_t IntanChar[5];
-    bool TestResult;
-    uint8_t ID[3];
     message = UART1_Read();
-    
+
     switch(message){
         
         case 't': //test uart
-            _put("ok \n");
+            _put("pass \n");
             break;
         
         case 'r': //test spi by reading REG
-            Intan_SPI_Test(IntanChar);
-            TestResult = ((IntanChar[0]|0x00FF) == 73) && ((IntanChar[1]|0x00FF) == 78) && ((IntanChar[2]|0x00FF) == 84) && ((IntanChar[3]|0x00FF) == 65) && ((IntanChar[4]|0x00FF) == 78);
-            if(TestResult)
-                _put("success \n");
+            if(Intan_SPI_Test())
+                _put("pass \n");
             else
                 _put("fail \n");
             break;
         
         case 'w': //test spi by writing REG0
-            TestResult = Intan_WriteREG(0, 0xDE);
-            if(TestResult)
-                _put("success \n");
+            
+            if(Intan_WriteREG(0, 0xDE))
+                _put("pass \n");
             else
                 _put("fail \n");
             break;
         
         case 'i': //Initialization
-            Intan_Initialization(250);
+            if(Intan_Initialization(250))
+                _put("pass \n");
+            else
+                _put("fail \n");
             break;
         
         case 'm': // test the communication between memory and pic
-            //_put("Reading JEDEC ID of the device... \n");
-            JEDECID(ID);
-            if((ID[0] == 0xBF) && (ID[1] == 0x26) && (ID[2] == 0x41))
-                _put("success \n");
+
+            if(TEST_COMM_MEM())
+                _put("pass \n");
             else
                 _put("fail\n");
+            break;
             
+        case 'd': // test storing data into the flash memory and fetching data from the flash memory    
+              
+            if(TEST_WRITE_READ())
+                _put("pass \n");
+            else
+                _put("fail \n");    
+            break;
+        
+        
         case 'c': //converting data
             break;
         

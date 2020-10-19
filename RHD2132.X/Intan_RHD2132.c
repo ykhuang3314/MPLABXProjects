@@ -48,20 +48,24 @@ uint16_t Intan_ReadREG(uint16_t addr)
     return Rx_buf[2];
 }
 
-void Intan_SPI_Test(uint16_t *data)
+bool Intan_SPI_Test(void)
 {
     //Read REG40-44 to verify the fidelity of the SPI interface
     //REG40-44 contains INTAN in ASCII
     uint16_t addr;
     uint16_t Rx_buf[7], CMD;
+    bool TestResult;
     
     addr = 40;
     
     int i;
     for(i=0; i<7; i++)
     {
-        CMD = READ_CMD | (addr<<8);
-        //__delay_us(1);
+        if (i>4)
+            CMD = Dummy_CMD;
+        else
+            CMD = READ_CMD | (addr<<8);
+        
         CS1_SetLow();
         //__delay_us(1);
         Rx_buf[i] = SPI1_Exchange16bit(CMD);
@@ -69,7 +73,15 @@ void Intan_SPI_Test(uint16_t *data)
         CS1_SetHigh();
         addr++;
     }
-    memcpy(data, &Rx_buf[2], 5);
+
+    TestResult = ((Rx_buf[2] & 0x00FF) == 0x0049);
+    TestResult &= ((Rx_buf[3] & 0x00FF) == 0x004E);
+    TestResult &= ((Rx_buf[4] & 0x00FF) == 0x0054);
+    TestResult &= ((Rx_buf[5] & 0x00FF) == 0x0041);
+    TestResult &= ((Rx_buf[6] & 0x00FF) == 0x004E);
+    
+    return TestResult;
+    
 }
 
 bool Intan_WriteREG(uint16_t addr, uint16_t data)
@@ -98,14 +110,14 @@ bool Intan_WriteREG(uint16_t addr, uint16_t data)
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
     }
-    if((Rx_buf[2]|0x00FF) == data)
+    if((Rx_buf[2] & 0x00FF) == data)
     {
-        printf("successful writing \n");
+        //printf("successful writing \n");
         return true;
     }
     else
     {
-        printf("unsuccessful writing \n");
+        //printf("unsuccessful writing \n");
         return false;        
     }
 }
@@ -154,7 +166,7 @@ void Intan_Convert_32(uint16_t *result)
         CS1_SetHigh();
         channel++;
     }
-    memcpy(result, Rx_buf[2], 32);
+    memcpy(result, &Rx_buf[2], 32);
 }
 
 void Intan_ADC_Calibrate(void)
@@ -185,7 +197,7 @@ void Intan_ADC_Clear(void)
     CS1_SetHigh();
 }
 
-void Intan_REG_Initialization(double fSCLK)
+void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
 {
     // RHD2000 Register 0 variables
     int adcReferenceBw;
@@ -308,7 +320,7 @@ void Intan_REG_Initialization(double fSCLK)
                                 // representation)
     absMode = 0;                // absolute value mode (0 = normal output; 1 = output passed through abs(x) function)
     dspEn = 1;                  // DSP offset removal enable/disable
-    dspCutoffFreq = 1;          // DSP offset removal HPF cutoff freqeuncy
+    dspCutoffFreq = 1;          // DSP offset removal HPF cutoff frequency
 
     zcheckDacPower = 1;         // impedance testing DAC power-up (0 = power down; 1 = power up)
     zcheckLoad = 0;             // impedance testing dummy load (0 = normal operation; 1 = insert 60 pF to ground)
@@ -358,6 +370,7 @@ void Intan_REG_Initialization(double fSCLK)
     Tx_buf[16] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
     Tx_buf[17] = (aPwr[31] << 7) | (aPwr[30] << 6) | (aPwr[29] << 5) | (aPwr[28] << 4) | (aPwr[27] << 3) | (aPwr[26] << 2) | (aPwr[25] << 1) | aPwr[24];      
     
+    memcpy(REG_data, &Tx_buf[0], 36);
     //Writing data to registers
     for(i = 0; i < 18; i++)
     {   
@@ -369,9 +382,25 @@ void Intan_REG_Initialization(double fSCLK)
     }
 }
 
-void Intan_Initialization(double fSCLK)
+bool Intan_Initialization(double fSCLK)
 {
-    Intan_REG_Initialization(fSCLK);
+    uint16_t data[18], ReadResult[18];
+    
+    Intan_REG_Initialization(fSCLK, data);
     __delay_ms(1);
-    Intan_ADC_Calibrate();    
+    Intan_ADC_Calibrate();
+    
+    bool TestResult;
+    TestResult = true;
+    
+    int i;
+    for(i=0; i<18; i++){
+        ReadResult[i] = Intan_ReadREG(i);
+        
+    }
+    for(i=0; i<18; i++){
+        TestResult &= ((ReadResult[i] & 0x00FF) == (data[i] & 0x00FF));
+    }
+    return TestResult;
+       
 }
