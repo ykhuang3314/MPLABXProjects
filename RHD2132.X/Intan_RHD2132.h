@@ -22,6 +22,7 @@ void Intan_ADC_Clear(void);
 void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data);
 bool Intan_Initialization(double fSCLK);
 bool Intan_SPI_Test(void);
+void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, bool flag);
 
 #ifdef	__cplusplus
 }

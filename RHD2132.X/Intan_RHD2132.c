@@ -4,6 +4,7 @@
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
 #include "Comm.h"
+#include "SST26VF016B.h"
 
 //Command 
 #define Dummy_CMD 0x0000
@@ -127,7 +128,7 @@ uint16_t Intan_Convert_Single(uint16_t channel)
     //read result from single channel
     uint16_t CMD;
     CMD = CONVERT_CMD | (channel << 8);
-    uint16_t Tx_buf[3];
+    /*uint16_t Tx_buf[3];
     Tx_buf[0] = CMD;
     Tx_buf[1] = Dummy_CMD;
     Tx_buf[2] = Dummy_CMD;
@@ -139,7 +140,63 @@ uint16_t Intan_Convert_Single(uint16_t channel)
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
     }
-    return Rx_buf[2];
+    return Rx_buf[2];*/
+    uint16_t Rx;
+    CS1_SetLow();
+    Rx = SPI1_Exchange16bit(CMD);
+    CS2_SetHigh();
+    return Rx;
+}
+
+void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, bool flag){
+    
+    uint16_t CMD;
+    CMD = CONVERT_CMD | (channel << 8);
+    
+    int data_size, count, count_mem;
+    data_size = 128; // maximum allowable bytes for single page program
+    uint16_t Rx_buf[data_size], dummy;
+    uint8_t wdata[data_size*2];
+            
+    count = 0; 
+    count_mem = 0;
+    
+    // Unlock the memory and erase the chip
+    UNLOCK_PROTECTION();
+    CHIP_ERASE(true);
+    
+    
+    while(flag){
+        
+        //ignore the received data in first two cycle 
+        if(count < 2){
+            CS1_SetLow();
+            dummy = SPI1_Exchange16bit(CMD);
+            CS2_SetHigh();
+            count++;
+        }
+        else{
+            if(count_mem < data_size){
+                CS1_SetLow();
+                Rx_buf[count_mem] = SPI1_Exchange16bit(CMD);
+                CS1_SetHigh();
+                count_mem++;              
+            }
+            else{
+                count_mem = 0;
+                UNLOCK_PROTECTION();
+                CONVERT_16_to_8(Rx_buf, wdata);
+                PAGE_PROGRAM_256(sec_no, init_addr, wdata);
+                init_addr += 256;
+                if(init_addr > 4096){
+                    init_addr = 0;
+                    sec_no += 1;
+                }
+                if(sec_no > 512)
+                    flag = false;
+            }
+        }
+    }
 }
 
 void Intan_Convert_32(uint16_t *result)
@@ -178,7 +235,7 @@ void Intan_ADC_Calibrate(void)
     int i;
     for(i = 1; i < 10; i++)
     {
-        Tx_buf[i] = Dummy_CMD;
+        Tx_buf[i] = Dummy_CMD; // at least nine dummy CMD need to be sent after a CALIBRATE CMD 
     }    
     for(i=0; i<10; i++)
     {    
@@ -342,7 +399,7 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     rH1Dac1 = 46; rH1Dac2 = 2; rH2Dac1 = 30; rH2Dac2 = 3; // set upper bandwidth of amplifiers to be 1kHz
     rLDac1 = 44; rLDac2 = 6; rLDac3 = 0;                  // set lower bandwidth of amplifiers to be 1Hz
     
-    uint16_t i;
+    int i;
     for(i = 0; i < 32; i++)
     {
         aPwr[i] = 1;            // turn on all amplifiers 
@@ -404,3 +461,4 @@ bool Intan_Initialization(double fSCLK)
     return TestResult;
        
 }
+

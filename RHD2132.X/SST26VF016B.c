@@ -85,20 +85,25 @@ void WRITE_DISABLE(void){
 
 }
 
+// having issue with dynamic memory allocation
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     
     uint8_t *Tx_buf;
-    Tx_buf = (uint8_t *) malloc(n+4);
+    Tx_buf = (uint8_t*)malloc(n+4);
     
     Tx_buf[0] = READ;
     Tx_buf[1] = (addr >> 16) & 0xFF;
     Tx_buf[2] = (addr >> 8) & 0xFF;
     Tx_buf[3] = addr & 0xFF;
     
-    uint8_t *Rx_buf;
-    Rx_buf = (uint8_t *) malloc(n+4);
-    
     int i;
+    for(i=4; i<(n+4); i++){
+        Tx_buf[i] = NOP;
+    }
+    
+    uint8_t *Rx_buf;
+    Rx_buf = (uint8_t*)malloc(n+4);
+
     CS2_SetLow();
     for(i=0; i<(n+4); i++){
         Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
@@ -110,7 +115,35 @@ void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     free(Rx_buf);
 }
 
-void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
+void READ_MEM_256(uint32_t addr, uint8_t *data){
+    
+    int data_size;
+    data_size = 256;
+    uint8_t Tx_buf[data_size+4];
+        
+    Tx_buf[0] = READ;
+    Tx_buf[1] = (addr >> 16) & 0xFF;
+    Tx_buf[2] = (addr >> 8) & 0xFF;
+    Tx_buf[3] = addr & 0xFF;
+    
+    int i;
+    for(i=4; i<(data_size+4); i++){
+        Tx_buf[i] = NOP;
+    }
+    
+    uint8_t Rx_buf[data_size+4];
+
+    CS2_SetLow();
+    for(i=0; i<10; i++){
+        Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
+    }
+    CS2_SetHigh();
+    
+    memcpy(data, &Rx_buf[4], data_size);
+}
+
+// having issue with dynamic memory allocation
+void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n){
     
     // Starting address
     uint32_t address;
@@ -118,13 +151,13 @@ void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     address <<= 12;
     address += addr;
     
-    // Set to be writable and check if it's busy
+    //prior to page program, execute write enable
     WRITE_ENABLE();
     
     // Write data
     uint8_t *Tx_buf;
     uint8_t Rx;
-    Tx_buf = (uint8_t *) malloc(n+4);
+    Tx_buf = (uint8_t*)malloc(n+4);
     
     Tx_buf[0] = PP;
     Tx_buf[1] = (address >> 16) & 0xFF;
@@ -142,6 +175,40 @@ void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n){
     while(IS_BUSY());
     
     free(Tx_buf);
+}
+
+void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data){
+    
+    int data_size;
+    data_size = 256;
+            
+    // Starting address
+    uint32_t address;
+    address = sec_no;
+    address <<= 12;
+    address += addr;
+    
+    //prior to page program, execute write enable
+    WRITE_ENABLE();
+    
+    // Write data
+    uint8_t Tx_buf[data_size+4];
+    uint8_t Rx;
+    
+    Tx_buf[0] = PP;
+    Tx_buf[1] = (address >> 16) & 0xFF;
+    Tx_buf[2] = (address >> 8) & 0xFF;
+    Tx_buf[3] = address & 0xFF;
+    memcpy(&Tx_buf[4], data, data_size);
+    
+    int i;
+    CS2_SetLow();
+    for(i=0; i<(data_size+4); i++){
+        Rx = spi2_exchangeByte(Tx_buf[i]);
+    }
+    CS2_SetHigh();
+    // waiting
+    while(IS_BUSY());
 
 }
 
@@ -154,6 +221,8 @@ void LOCK_PROTECTION(void){
     Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
 }
+
+
 
 void UNLOCK_PROTECTION(void){
     uint8_t CMD, Rx;
@@ -174,9 +243,9 @@ void SECTOR_ERASE (uint16_t sec_no, bool flagwait){
     uint8_t Tx_buf[4];
     Tx_buf[0] = CMD;
     // 24-bit address (MSB first)
-    Tx_buf[1] = (Addr >> 16) && 0xFF;   // addr[23:16]
-    Tx_buf[2] = (Addr >> 8) && 0xFF;    // addr[15:8]
-    Tx_buf[3] = Addr && 0xFF;           // addr[7:0]
+    Tx_buf[1] = (Addr >> 16) & 0xFF;   // addr[23:16]
+    Tx_buf[2] = (Addr >> 8) & 0xFF;    // addr[15:8]
+    Tx_buf[3] = Addr & 0xFF;           // addr[7:0]
     
     //prior to erase sector, execute write enable
     WRITE_ENABLE();
@@ -201,9 +270,7 @@ void CHIP_ERASE (bool flagwait){
     Rx = spi2_exchangeByte(CMD);
     CS2_SetHigh();
     //waiting for erasing
-    while(IS_BUSY() && flagwait){
-        __delay_us(10);
-    }
+    while(IS_BUSY() && flagwait);
 }
 
 bool TEST_COMM_MEM(void){
@@ -231,29 +298,103 @@ bool TEST_WRITE_READ(void){
     wdata[4] = 'M';
     wdata[5] = 'G';
     
-    // address
+    // Address
     wsec_no = 0; init_addr = 0;
     
     // To write data into memory, unlock block protection REG.
     UNLOCK_PROTECTION();
     
     // Erase memory array before writing
-    SECTOR_ERASE (wsec_no, true);    
+    SECTOR_ERASE(wsec_no, true);    
     
     // Write data into memory
-    PAGE_PROGRAM (wsec_no, init_addr, wdata, data_size);
+    //PAGE_PROGRAM (wsec_no, init_addr, wdata, data_size);
+    PAGE_PROGRAM_TEST (wsec_no, init_addr, wdata);
     
     // Starting address for reading
     uint32_t addr;
     addr = (wsec_no << 12) | init_addr;
-    READ_MEM (addr, rdata, data_size);
+    //READ_MEM(addr, rdata, data_size);
+    READ_MEM_TEST(addr, rdata);
     
-    int i; 
+    int i;   
     TestResult = true;
     for(i=0; i<data_size; i++){
-        TestResult |= (rdata[i] == wdata[i]);
+        TestResult &= (rdata[i] == wdata[i]);
     }
-    
     return TestResult;
     
+}
+
+void READ_MEM_TEST(uint32_t addr, uint8_t *data){
+    
+    uint8_t Tx_buf[10];
+        
+    Tx_buf[0] = READ;
+    Tx_buf[1] = (addr >> 16) & 0xFF;
+    Tx_buf[2] = (addr >> 8) & 0xFF;
+    Tx_buf[3] = addr & 0xFF;
+    
+    int i;
+    for(i=4; i<10; i++){
+        Tx_buf[i] = NOP;
+    }
+    
+    uint8_t Rx_buf[10];
+
+    CS2_SetLow();
+    for(i=0; i<10; i++){
+        Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
+    }
+    CS2_SetHigh();    
+    memcpy(data, &Rx_buf[4], 6);
+}
+
+void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data){
+    
+    int n;
+    n = 6;
+            
+    // Starting address
+    uint32_t address;
+    address = sec_no;
+    address <<= 12;
+    address += addr;
+    
+    //prior to page program, execute write enable
+    WRITE_ENABLE();
+    
+    // Write data
+    uint8_t Tx_buf[n+4];
+    uint8_t Rx;
+    
+    Tx_buf[0] = PP;
+    Tx_buf[1] = (address >> 16) & 0xFF;
+    Tx_buf[2] = (address >> 8) & 0xFF;
+    Tx_buf[3] = address & 0xFF;
+    memcpy(&Tx_buf[4], data, n);
+    
+    int i;
+    CS2_SetLow();
+    for(i=0; i<(n+4); i++){
+        Rx = spi2_exchangeByte(Tx_buf[i]);
+    }
+    CS2_SetHigh();
+    // waiting
+    while(IS_BUSY());
+
+}
+
+void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b){
+    
+    int array_size;
+    array_size = sizeof(data_16b)/2;
+    
+    int i;
+    for(i=0; i<array_size; i++){
+        
+        //Divide the 16bit data into 2 8bit data (MSB first)
+        data_8b[i] = (data_16b[i] >> 8) & 0xFF;
+        data_8b[i+1] = data_16b[i] & 0xFF; 
+    }
 }

@@ -27,20 +27,24 @@ void process_message(void)
 {
     uint8_t message;
     message = UART1_Read();
-
+    uint8_t rdata[6];
+    
     switch(message){
         
-        case 't': //test uart
+        //verified
+        case 't': // test UART
             _put("pass \n");
             break;
         
-        case 'r': //test spi by reading REG
+        // verified
+        case 'r': // test spi communication with INTAN chip
             if(Intan_SPI_Test())
                 _put("pass \n");
             else
                 _put("fail \n");
             break;
         
+        /* function verified
         case 'w': //test spi by writing REG0
             
             if(Intan_WriteREG(0, 0xDE))
@@ -48,22 +52,28 @@ void process_message(void)
             else
                 _put("fail \n");
             break;
+        */
         
-        case 'i': //Initialization
+            
+        // verified    
+        case 'i': // Intan Initialization including REG configuration and ADC calibration
             if(Intan_Initialization(250))
                 _put("pass \n");
             else
                 _put("fail \n");
             break;
         
+        // verified    
         case 'm': // test the communication between memory and pic
 
             if(TEST_COMM_MEM())
                 _put("pass \n");
             else
-                _put("fail\n");
+                _put("fail \n");
             break;
-            
+        
+        // verified, but not working with the use of dynamic memory allocation  
+        
         case 'd': // test storing data into the flash memory and fetching data from the flash memory    
               
             if(TEST_WRITE_READ())
@@ -72,7 +82,22 @@ void process_message(void)
                 _put("fail \n");    
             break;
         
+        //Test for erasing memory and reading data from memory    
+        // verified
+        /*
+        case 'C':
+            UNLOCK_PROTECTION();
+            SECTOR_ERASE(0, true);
+            break;
         
+        case 'R':
+            READ_MEM_TEST(0, rdata);
+            if(rdata[0] == 0xFF)
+                _put("pass \n");
+            else
+                _put("fail \n"); 
+            break;       
+        */
         case 'c': //converting data
             break;
         
@@ -80,3 +105,4 @@ void process_message(void)
             break;
     }
 }
+

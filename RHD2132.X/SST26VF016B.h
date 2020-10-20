@@ -49,14 +49,18 @@ bool IS_WRITEABLE(void);
 void WRITE_ENABLE(void);
 void WRITE_DISABLE(void);
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n);
-void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t* data, uint16_t n);
+void READ_MEM_256(uint32_t addr, uint8_t *data);
+void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n);
+void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data);
 void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
 void CHIP_ERASE (bool flagwait);
 bool TEST_COMM_MEM (void); 
 bool TEST_WRITE_READ(void);
-
+void READ_MEM_TEST(uint32_t addr, uint8_t *data);
+void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data);
+void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b);
 
 #ifdef	__cplusplus
 }
