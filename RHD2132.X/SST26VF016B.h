@@ -42,6 +42,10 @@ extern "C" {
 #define isERASESUSPEND_MASH 0x04 // erase suspended    
 #define isPROGRAMSUSPEND_MASH 0x08 // program suspended
 
+//Mask for address
+#define SECTOR_MASK 0xFFFFF000 // one sector contains 4kbyte     
+#define ADDRESS_MASK 0x00000FFF // the address within a sector 
+    
 uint8_t READ_STATUS_REG(void);
 void JEDECID(uint8_t *data);
 bool IS_BUSY(void);
@@ -56,11 +60,14 @@ void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
 void CHIP_ERASE (bool flagwait);
+
+
+// functions for testing purpose
 bool TEST_COMM_MEM (void); 
 bool TEST_WRITE_READ(void);
 void READ_MEM_TEST(uint32_t addr, uint8_t *data);
 void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data);
-void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b);
+
 
 #ifdef	__cplusplus
 }

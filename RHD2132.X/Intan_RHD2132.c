@@ -3,18 +3,8 @@
 #include <stdio.h>
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
-#include "Comm.h"
-#include "SST26VF016B.h"
+#include "Intan_RHD2132.h"
 
-//Command 
-#define Dummy_CMD 0x0000
-#define READ_CMD 0xC000 
-#define WRITE_CMD 0x8000
-#define CONVERT_CMD 0x0000
-#define CALIBRATE_CMD 0x5500
-#define CLEAR_CMD 0x3A00
-
-#define UNUSED(a) ((void)(a)) 
 
 void DataExchange16bitTest(uint16_t data)
 {
@@ -112,15 +102,9 @@ bool Intan_WriteREG(uint16_t addr, uint16_t data)
         CS1_SetHigh();
     }
     if((Rx_buf[2] & 0x00FF) == data)
-    {
-        //printf("successful writing \n");
         return true;
-    }
     else
-    {
-        //printf("unsuccessful writing \n");
         return false;        
-    }
 }
 
 uint16_t Intan_Convert_Single(uint16_t channel)
@@ -128,19 +112,6 @@ uint16_t Intan_Convert_Single(uint16_t channel)
     //read result from single channel
     uint16_t CMD;
     CMD = CONVERT_CMD | (channel << 8);
-    /*uint16_t Tx_buf[3];
-    Tx_buf[0] = CMD;
-    Tx_buf[1] = Dummy_CMD;
-    Tx_buf[2] = Dummy_CMD;
-    uint16_t Rx_buf[3];
-    int i; 
-    for(i=0; i<3; i++){
-        //__delay_us(1);
-        CS1_SetLow();
-        Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
-        CS1_SetHigh();
-    }
-    return Rx_buf[2];*/
     uint16_t Rx;
     CS1_SetLow();
     Rx = SPI1_Exchange16bit(CMD);
@@ -148,57 +119,7 @@ uint16_t Intan_Convert_Single(uint16_t channel)
     return Rx;
 }
 
-void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, bool flag){
-    
-    uint16_t CMD;
-    CMD = CONVERT_CMD | (channel << 8);
-    
-    int data_size, count, count_mem;
-    data_size = 128; // maximum allowable bytes for single page program
-    uint16_t Rx_buf[data_size], dummy;
-    uint8_t wdata[data_size*2];
-            
-    count = 0; 
-    count_mem = 0;
-    
-    // Unlock the memory and erase the chip
-    UNLOCK_PROTECTION();
-    CHIP_ERASE(true);
-    
-    
-    while(flag){
-        
-        //ignore the received data in first two cycle 
-        if(count < 2){
-            CS1_SetLow();
-            dummy = SPI1_Exchange16bit(CMD);
-            CS2_SetHigh();
-            count++;
-        }
-        else{
-            if(count_mem < data_size){
-                CS1_SetLow();
-                Rx_buf[count_mem] = SPI1_Exchange16bit(CMD);
-                CS1_SetHigh();
-                count_mem++;              
-            }
-            else{
-                count_mem = 0;
-                UNLOCK_PROTECTION();
-                CONVERT_16_to_8(Rx_buf, wdata);
-                PAGE_PROGRAM_256(sec_no, init_addr, wdata);
-                init_addr += 256;
-                if(init_addr > 4096){
-                    init_addr = 0;
-                    sec_no += 1;
-                }
-                if(sec_no > 512)
-                    flag = false;
-            }
-        }
-    }
-}
-
+/*
 void Intan_Convert_32(uint16_t *result)
 {
     //read results cycling through successive channel, starting from channel 0 
@@ -225,6 +146,7 @@ void Intan_Convert_32(uint16_t *result)
     }
     memcpy(result, &Rx_buf[2], 32);
 }
+*/
 
 void Intan_ADC_Calibrate(void)
 {
@@ -459,6 +381,5 @@ bool Intan_Initialization(double fSCLK)
         TestResult &= ((ReadResult[i] & 0x00FF) == (data[i] & 0x00FF));
     }
     return TestResult;
-       
 }
 

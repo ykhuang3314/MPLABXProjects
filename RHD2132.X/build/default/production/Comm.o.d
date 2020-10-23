@@ -12,4 +12,5 @@ mcc_generated_files/tmr1.h  \
 mcc_generated_files/spi2_driver.h  \
  mcc_generated_files/spi2_types.h  \
 Intan_RHD2132.h  \
-SST26VF016B.h 
+SST26VF016B.h  \
+ Measurement.h 

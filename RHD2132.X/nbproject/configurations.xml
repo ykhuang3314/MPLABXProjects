@@ -22,6 +22,7 @@
       <itemPath>Intan_RHD2132.h</itemPath>
       <itemPath>Comm.h</itemPath>
       <itemPath>SST26VF016B.h</itemPath>
+      <itemPath>Measurement.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -48,6 +49,7 @@
       <itemPath>Intan_RHD2132.c</itemPath>
       <itemPath>Comm.c</itemPath>
       <itemPath>SST26VF016B.c</itemPath>
+      <itemPath>Measurement.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

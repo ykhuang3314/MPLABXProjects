@@ -223,7 +223,6 @@ void LOCK_PROTECTION(void){
 }
 
 
-
 void UNLOCK_PROTECTION(void){
     uint8_t CMD, Rx;
     CMD = ULBPR;
@@ -273,6 +272,8 @@ void CHIP_ERASE (bool flagwait){
     while(IS_BUSY() && flagwait);
 }
 
+// The followings are for testing purpose 
+
 bool TEST_COMM_MEM(void){
     uint8_t ID[3];
     JEDECID(ID);
@@ -321,6 +322,8 @@ bool TEST_WRITE_READ(void){
     TestResult = true;
     for(i=0; i<data_size; i++){
         TestResult &= (rdata[i] == wdata[i]);
+        write_byte(rdata[i]);
+        _put("\n");
     }
     return TestResult;
     
@@ -385,16 +388,5 @@ void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data){
 
 }
 
-void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b){
-    
-    int array_size;
-    array_size = sizeof(data_16b)/2;
-    
-    int i;
-    for(i=0; i<array_size; i++){
-        
-        //Divide the 16bit data into 2 8bit data (MSB first)
-        data_8b[i] = (data_16b[i] >> 8) & 0xFF;
-        data_8b[i+1] = data_16b[i] & 0xFF; 
-    }
-}
+
+

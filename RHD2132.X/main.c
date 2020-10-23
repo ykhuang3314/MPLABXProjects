@@ -51,6 +51,7 @@
 #include "Intan_RHD2132.h"
 #include "Comm.h"
 #include "SST26VF016B.h"
+#include "Measurement.h"
 /*
                          Main application
  */
