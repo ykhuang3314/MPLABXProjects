@@ -13,12 +13,12 @@ extern "C" {
 #endif
 
 //Command 
-#define Dummy_CMD 0x0000
-#define READ_CMD 0xC000 
-#define WRITE_CMD 0x8000
-#define CONVERT_CMD 0x0000
-#define CALIBRATE_CMD 0x5500
-#define CLEAR_CMD 0x3A00
+#define Dummy_CMD       0x0000
+#define READ_CMD        0xC000 
+#define WRITE_CMD       0x8000
+#define CONVERT_CMD     0x0000
+#define CALIBRATE_CMD   0x5500
+#define CLEAR_CMD       0x3A00
 
 #define UNUSED(a) ((void)(a))    
     
