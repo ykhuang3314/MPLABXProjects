@@ -108,9 +108,11 @@ void process_message(void)
         case 'c': //converting data
             Intan_Meas_Single(0, 0, 0, 5, true);
             break;
+        
         case 'p': //print out data stored in memory
             PRINT_MEM(0, 5, true);
             break;
+        
         default:
             break;
     }

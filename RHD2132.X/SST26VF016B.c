@@ -299,6 +299,8 @@ bool TEST_WRITE_READ(void){
     wdata[4] = 'M';
     wdata[5] = 'G';
     
+    char results[data_size];
+    
     // Address
     wsec_no = 0; init_addr = 0;
     
@@ -322,11 +324,11 @@ bool TEST_WRITE_READ(void){
     TestResult = true;
     for(i=0; i<data_size; i++){
         TestResult &= (rdata[i] == wdata[i]);
-        write_byte(rdata[i]);
-        _put("\n");
+        results[i] = (char)rdata[i];
     }
+    _put(results);
+    _put("\n");
     return TestResult;
-    
 }
 
 void READ_MEM_TEST(uint32_t addr, uint8_t *data){

@@ -9,6 +9,10 @@
 
 void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     
+    // received data from Intan RHD2132 is 16bit; while, the spi flash memory is 8bit.
+    // conversion is required before dumping the data into memory
+    
+    
     /*
     int num_element;
     num_element = sizeof(data_16b)/sizeof(data_16[0]);
@@ -17,9 +21,9 @@ void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     int i;
     for(i=0; i<num_element; i++){
         
-        //Divide the 16bit data into 2 8bit data (MSB first)
-        data_8b[2*i] = (data_16b[i] >> 8) & 0xFF;
-        data_8b[2*i+1] = data_16b[i] & 0xFF; 
+        // Divide the 16bit data into 2 8bit data (MSB first)
+        data_8b[2*i] = (data_16b[i] >> 8) & 0xFF;   //MSB
+        data_8b[2*i+1] = data_16b[i] & 0xFF;        //LSB 
     }
 }
 
@@ -40,6 +44,9 @@ void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, ui
     // Unlock the memory and erase the chip
     UNLOCK_PROTECTION();
     CHIP_ERASE(true);
+    
+    uint16_t address; // address within a memory sector
+    address = init_addr;
     
     while(flag){
         
@@ -63,13 +70,13 @@ void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, ui
                 UNLOCK_PROTECTION();
                 //convert 16-bit data array to 8-bit data array (MSB first)
                 CONVERT_16_to_8(Rx_buf, wdata, data_size/2);
-                //dump the data into memory once 256byte data is received
-                PAGE_PROGRAM_256(sec_no, init_addr, wdata);
+                //dump the data into memory once 256byte data is received 
+                PAGE_PROGRAM_256(sec_no, address, wdata);
                 //increase starting address
-                init_addr += 256;
-                //once the starting address exceed 4K, move onto next memory sector
-                if(init_addr > 4096){
-                    init_addr = 0;
+                address += 256;
+                //once the address exceed 4K, move onto next memory sector
+                if(address > 4095){
+                    address = 0;
                     sec_no += 1;
                 }
                 if(sec_no > end_sector || sec_no > 512) // 512 4Kbyte sector are available for storing data 
@@ -89,20 +96,23 @@ void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, unsigned short ADC_Vref, char 
     
     // D/A conversion. Unit: uV
     unsigned long long tmp;
-    unsigned long value, tmp2; 
+    unsigned long value; 
+    unsigned short int tmp2;
     
     tmp = (unsigned long long)(ADC_Vref*1000)*Data; 
     // 16bit resolution
     value = (unsigned long)(tmp >> 16);
     
     // Convert value into char string with 3 decimals (unit: mV; range: 0.000 ~ 1200.000)
-    Result[4] = '.';
     int i;
     for (i=7; i>=0; i--){
-        if(i!=4){
+        if(i==4)
+            Result[i] = '.';
+        else{        
             tmp2 = value%10;
-            value /= 10;
-            Result[i] = (char)tmp2 + '0';
+            value /= 10;       
+            //ASCII code for char 0-9: 48-59
+            Result[i] = (char)tmp2 + '0'; //'0'==48
         }
     }
 }
@@ -115,13 +125,13 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     uint32_t start_addr, end_addr;
     start_addr = start_sector;
     start_addr <<= 12;
-    end_addr = end_sector;
+    end_addr = end_sector+1;
     end_addr <<= 12;
     
     char Result[8];
     
     while(flag){
-        if(start_addr <= end_addr){
+        if(start_addr < end_addr){
             READ_MEM_256(start_addr, rdata);
             for(i=0; i<data_size; i+=2){
                 // Display data on COM via UART
