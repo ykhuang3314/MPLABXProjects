@@ -164,16 +164,6 @@ void Intan_Meas_Multi(bool flag){
     uint16_t Rx_buf[no_channel][data_size/2];
     uint8_t wdata[no_channel][data_size];
     
-    CS1_SetLow();
-    dummy = SPI1_Exchange16bit(CMD);
-    CS2_SetHigh();
-    
-    channel = 63;
-    CMD = CONVERT_CMD | (channel << 8);
-    CS1_SetLow();
-    dummy = SPI1_Exchange16bit(CMD);
-    CS2_SetHigh();
-    
     int i, count_mem, cnt;
     
     uint16_t sec_no[no_channel];
@@ -186,6 +176,22 @@ void Intan_Meas_Multi(bool flag){
     address = 0;
     count_mem = 0;
     cnt = 0;
+    
+    // Unlock the memory and erase the chip before writing data
+    UNLOCK_PROTECTION();
+    CHIP_ERASE(true);
+    
+    CS1_SetLow();
+    dummy = SPI1_Exchange16bit(CMD);
+    CS1_SetHigh();
+    
+    channel = 63;
+    CMD = CONVERT_CMD | (channel << 8);
+    
+    CS1_SetLow();
+    dummy = SPI1_Exchange16bit(CMD);
+    CS1_SetHigh();
+    
     while(flag){ 
         
         if(count_mem < data_size/2){

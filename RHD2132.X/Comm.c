@@ -92,7 +92,7 @@ void process_message(void)
         //Test for erasing memory and reading data from memory    
         // verified
         /*
-        case 'C':
+        case 'e':
             UNLOCK_PROTECTION();
             SECTOR_ERASE(0, true);
             break;
@@ -105,14 +105,27 @@ void process_message(void)
                 _put("fail \n");
             break;       
         */
+            
+        // Single channel measurement    
         case 'c': //converting data
-            Intan_Meas_Single(0, 0, 0, 1, true);
+            
+            //void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag);
+            Intan_Meas_Single(0, 0, 0, 16, true);
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 1, true);
+            PRINT_MEM(0, 16, true);
             break;
         
+        // 32 channel measurement
+        case 's':
+            Intan_Meas_Multi(true);
+            break;
+        
+        case 'o':
+            PRINT_MEM(0, 512, true);
+            break;
+            
         default:
             break;
     }

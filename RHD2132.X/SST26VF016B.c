@@ -134,7 +134,7 @@ void READ_MEM_256(uint32_t addr, uint8_t *data){
     uint8_t Rx_buf[data_size+4];
 
     CS2_SetLow();
-    for(i=0; i<10; i++){
+    for(i=0; i<(data_size+4); i++){
         Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
     }
     CS2_SetHigh();
