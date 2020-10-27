@@ -65,7 +65,7 @@ int main(void)
     
     spi2_open(SPI2_DEFAULT);
     CS2_SetHigh();
-    CS1_SetHigh();
+    //CS1_SetHigh();
     
     while(1)
     {

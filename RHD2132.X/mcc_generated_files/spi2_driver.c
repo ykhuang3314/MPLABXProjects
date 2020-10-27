@@ -36,7 +36,7 @@ inline void spi2_close(void)
 //con1 == SPIxCON1, con2 == SPIxCON2, stat == SPIxSTAT, operation == Master/Slave
 typedef struct { uint16_t con1; uint16_t con2; uint16_t stat; uint8_t operation;} spi2_configuration_t;
 static const spi2_configuration_t spi2_configuration[] = {   
-    { 0x0131, 0x0000, 0x0000, 0 }
+    { 0x0132, 0x0000, 0x0000, 0 }
 };
 
 bool spi2_open(spi2_modes spiUniqueConfiguration)

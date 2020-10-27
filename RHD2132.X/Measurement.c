@@ -79,29 +79,35 @@ void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, ui
                     address = 0;
                     sec_no += 1;
                 }
-                if(sec_no > end_sector || sec_no > 512) // 512 4Kbyte sector are available for storing data 
+                if(sec_no > end_sector || sec_no > 512){ // 512 4Kbyte sector are available for storing data 
                     flag = false;
+                    _put("done\n");
+                }
             }
         }
     }
 }
 
-void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, unsigned short ADC_Vref, char *Result){
+
+void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, char *Result){
     
     // 16bit ADC value
     uint16_t Data;
     Data = Din_MSB;
     Data <<= 8;
     Data += Din_LSB;
+
     
     // D/A conversion. Unit: uV
     unsigned long long tmp;
-    unsigned long value; 
-    unsigned short int tmp2;
+    unsigned long value;
+    unsigned short tmp2;
     
-    tmp = (unsigned long long)(ADC_Vref*1000)*Data; 
-    // 16bit resolution
+    //16bit resolution. Vref=1.2V, VLSB = 18uV
+    tmp = (unsigned long long)Data * 1200000ULL; 
     value = (unsigned long)(tmp >> 16);
+    
+    // The resulting value is not correct. 
     
     // Convert value into char string with 3 decimals (unit: mV; range: 0000.000 ~ 1200.000)
     int i;
@@ -128,21 +134,23 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     end_addr = end_sector+1;
     end_addr <<= 12;
     
-    char Result[8];
+    char Result[7];
     
     while(flag){
         if(start_addr < end_addr){
             READ_MEM_256(start_addr, rdata);
             for(i=0; i<data_size; i+=2){
                 // Display data on COM via UART
-                Data_Print(rdata[i], rdata[i+1], 1200, Result);
+                Data_Print(rdata[i], rdata[i+1], Result);
                 _put(Result);
                 _put("\n");
             }
             start_addr += 256;
         }
-        else
-            flag = false;        
+        else{
+            flag = false;
+            _put("done\n");
+        }
     }
 }
 
@@ -221,8 +229,96 @@ void Intan_Meas_Multi(bool flag){
             }
             if(cnt == 16){
                 flag = false;
+                _put("done\n");
             }
         }
     }
 }
+
+void Intan_Meas_Multi_V2(bool flag){
     
+    // Execute multi-channel measurement manually
+    
+    uint16_t CMD, channel;
+    
+    int data_size, no_channel;
+    
+    data_size = 256; // maximum allowable bytes for single page program
+    no_channel = 2;   // taking measurement from channel 0 to channel (n-1)
+    
+    uint16_t Rx_buf[no_channel][data_size/2];
+    uint8_t wdata[no_channel][data_size];
+    
+    int i, count_mem, cnt;
+    
+    int16_t sec_no[no_channel];
+    uint16_t address; 
+    
+    address = 0; //always start from address 0 within a sector
+    
+    // Avaliable memory for each channel is 512/(no_channel) sector
+    for(i=0; i<no_channel; i++){
+        sec_no[i] = (512/no_channel)*i;
+    }
+    
+    count_mem = 0;
+    cnt = 0;
+    
+    // Unlock the memory and erase the chip before writing data
+    UNLOCK_PROTECTION();
+    CHIP_ERASE(true);
+    
+    //starting from the conversion of channel 0 and ignore the received data in the first two cycles
+    uint16_t dummy;
+    channel = 0;
+    
+    for(i=0; i<2; i++){
+        CMD = CONVERT_CMD | (channel << 8);
+        CS1_SetLow();
+        dummy = SPI1_Exchange16bit(CMD);
+        CS1_SetHigh();
+        channel++;
+    }    
+    
+    while(flag){
+        
+        if(count_mem < data_size/2){
+            for(i=0; i<no_channel; i++){            
+                
+                CMD = CONVERT_CMD | (channel << 8);
+                CS1_SetLow();
+                Rx_buf[i][count_mem] = SPI1_Exchange16bit(CMD);
+                CS1_SetHigh();
+                
+                channel++;
+                if(channel == no_channel){
+                    channel = 0;
+                }
+            }
+            count_mem++;
+        }
+        else{
+            
+            count_mem = 0;
+            //unlock block protection reg to write data
+            UNLOCK_PROTECTION();
+            for(i=0; i<no_channel; i++){
+                //convert 16-bit data array to 8-bit data array (MSB first)
+                CONVERT_16_to_8(Rx_buf[i], wdata[i], data_size/2);
+                //dump the data into memory once 256byte data is received 
+                PAGE_PROGRAM_256((sec_no[i] + cnt), address, wdata[i]);
+            }
+            //increase starting address
+            address += 256;
+            //once the address exceed 4K, move onto next memory sector
+            if(address > 4095){
+                address = 0;
+                cnt += 1;
+            }
+            if(cnt == (512/no_channel)){
+                flag = false;
+                _put("done\n");
+            }
+        }    
+    }
+}

@@ -64,7 +64,7 @@ void process_message(void)
             
         // verified    
         case 'i': // Intan Initialization including REG configuration and ADC calibration
-            if(Intan_Initialization(250))
+            if(Intan_Initialization(1000))
                 _put("pass\n");
             else
                 _put("fail\n");
@@ -105,21 +105,28 @@ void process_message(void)
                 _put("fail \n");
             break;       
         */
+        
+        case 'e':
+            // Unlock the memory and erase the chip
+            UNLOCK_PROTECTION();
+            CHIP_ERASE(true);
+            _put("done\n");
+            break;
             
         // Single channel measurement    
         case 'c': //converting data
             
-            //void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag);
-            Intan_Meas_Single(0, 0, 0, 16, true);
+            //Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag);
+            Intan_Meas_Single(0, 0, 0, 1, true);
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 16, true);
+            PRINT_MEM(0, 1, true);
             break;
         
         // 32 channel measurement
         case 's':
-            Intan_Meas_Multi(true);
+            Intan_Meas_Multi_V2(true);
             break;
         
         case 'o':
