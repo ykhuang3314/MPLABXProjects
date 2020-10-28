@@ -299,7 +299,8 @@ bool TEST_WRITE_READ(void){
     wdata[4] = 'M';
     wdata[5] = 'G';
     
-    char results[data_size];
+    char results[data_size+1];
+    results[6] = 0x00; // Null
     
     // Address
     wsec_no = 0; init_addr = 0;

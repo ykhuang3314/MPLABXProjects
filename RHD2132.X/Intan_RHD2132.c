@@ -30,8 +30,6 @@ uint16_t Intan_ReadREG(uint16_t addr)
     uint16_t Rx_buf[3];
     int i; 
     for(i=0; i<3; i++){
-        //__delay_us(1); // delay between CMD 
-                         // without setting a delay tcsoff = 1us
         CS1_SetLow();
         Rx_buf[i] = SPI1_Exchange16bit(Tx_buf[i]);
         CS1_SetHigh();
@@ -58,9 +56,7 @@ bool Intan_SPI_Test(void)
             CMD = READ_CMD | (addr<<8);
         
         CS1_SetLow();
-        //__delay_us(1);
         Rx_buf[i] = SPI1_Exchange16bit(CMD);
-        //__delay_us(1);
         CS1_SetHigh();
         addr++;
     }
@@ -118,35 +114,6 @@ uint16_t Intan_Convert_Single(uint16_t channel)
     CS2_SetHigh();
     return Rx;
 }
-
-/*
-void Intan_Convert_32(uint16_t *result)
-{
-    //read results cycling through successive channel, starting from channel 0 
-    uint16_t channel;
-    uint16_t Rx_buf[34], CMD;
-    
-    channel = 0;
-    int i;
-    for(i=0; i<34; i++)
-    {
-        if(channel>31)
-        {
-            CMD = Dummy_CMD;
-        }
-        else
-        {    
-            CMD = CONVERT_CMD | (channel<< 8);
-        }
-        //__delay_us(1);
-        CS1_SetLow();
-        Rx_buf[i] = SPI1_Exchange16bit(CMD);
-        CS1_SetHigh();
-        channel++;
-    }
-    memcpy(result, &Rx_buf[2], 32);
-}
-*/
 
 void Intan_ADC_Calibrate(void)
 {

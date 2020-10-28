@@ -26,7 +26,6 @@ void DataExchange16bitTest(uint16_t data);
 uint16_t Intan_ReadREG(uint16_t addr);
 bool Intan_WriteREG(uint16_t addr, uint16_t data);
 uint16_t Intan_Convert_Single(uint16_t channel);
-//void Intan_Convert_32(uint16_t *result);
 void Intan_ADC_Calibrate(void);
 void Intan_ADC_Clear(void);
 void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data);

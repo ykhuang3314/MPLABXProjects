@@ -48,6 +48,7 @@ void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, ui
     uint16_t address; // address within a memory sector
     address = init_addr;
     
+    _put("start");
     while(flag){
         
         //ignore the received data in first two cycle
@@ -103,7 +104,7 @@ void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, char *Result){
     unsigned long value;
     unsigned short tmp2;
     
-    //16bit resolution. Vref=1.2V, VLSB = 18uV
+    //16bit resolution. Vref=1.2V, VLSB = 18.3uV
     tmp = (unsigned long long)Data * 1200000ULL; 
     value = (unsigned long)(tmp >> 16);
     
@@ -111,6 +112,9 @@ void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, char *Result){
     
     // Convert value into char string with 3 decimals (unit: mV; range: 0000.000 ~ 1200.000)
     int i;
+    
+    Result[8] = 0x00; // Null
+    
     for (i=7; i>=0; i--){
         if(i==4)
             Result[i] = '.';
@@ -121,6 +125,7 @@ void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, char *Result){
             Result[i] = (char)tmp2 + '0'; //'0'==48
         }
     }
+    
 }
 
 void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
@@ -134,8 +139,9 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     end_addr = end_sector+1;
     end_addr <<= 12;
     
-    char Result[7];
+    char Result[9];
     
+    //put("\n");
     while(flag){
         if(start_addr < end_addr){
             READ_MEM_256(start_addr, rdata);
@@ -200,6 +206,7 @@ void Intan_Meas_Multi(bool flag){
     dummy = SPI1_Exchange16bit(CMD);
     CS1_SetHigh();
     
+    _put("start\n");
     while(flag){ 
         
         if(count_mem < data_size/2){
@@ -235,7 +242,7 @@ void Intan_Meas_Multi(bool flag){
     }
 }
 
-void Intan_Meas_Multi_V2(bool flag){
+void Intan_Meas_Multi_V2(int no_sec, bool flag){
     
     // Execute multi-channel measurement manually
     
@@ -243,7 +250,7 @@ void Intan_Meas_Multi_V2(bool flag){
     
     int data_size, no_channel;
     
-    data_size = 256; // maximum allowable bytes for single page program
+    data_size = 256; // maximum allowable bytes for single page program command
     no_channel = 2;   // taking measurement from channel 0 to channel (n-1)
     
     uint16_t Rx_buf[no_channel][data_size/2];
@@ -279,7 +286,7 @@ void Intan_Meas_Multi_V2(bool flag){
         CS1_SetHigh();
         channel++;
     }    
-    
+    _put("start\n");
     while(flag){
         
         if(count_mem < data_size/2){
@@ -315,7 +322,7 @@ void Intan_Meas_Multi_V2(bool flag){
                 address = 0;
                 cnt += 1;
             }
-            if(cnt == (512/no_channel)){
+            if(cnt == (512/no_channel) || cnt == no_sec){
                 flag = false;
                 _put("done\n");
             }

@@ -3704,7 +3704,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="SPI1" registerAlias="SPICON1"/>
-         <value>1338</value>
+         <value>1334</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="INTERNAL OSCILLATOR" registerAlias="PMD2" settingAlias="OC1MD" alias="enabled"/>
@@ -4036,7 +4036,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="SPI1" registerAlias="SPICON1" settingAlias="SPRE"/>
-         <value>2:1</value>
+         <value>3:1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="INTERNAL OSCILLATOR" registerAlias="OSCCON" settingAlias="SOSCEN" alias="disabled"/>
@@ -5400,7 +5400,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPI1" name="ClockFrequency"/>
-         <value>1000000.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</value>
+         <value>666666.66666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666667</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="CNPU1" settingAlias="CN6PUE" alias="disabled"/>
@@ -5834,7 +5834,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/spi1.c</file>
-         <hash>4a8475d32dc4601e91eadceaea62aab16273fd1cddfae1ea65c16ca31bc8242a</hash>
+         <hash>35f011793e03d3444d870d61893ab9469e6e618f512b097a0fc2d6f393900ad0</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.h</file>

@@ -15,11 +15,6 @@ void _put(char *pt)
     }
 }
 
-void write_byte(uint8_t data){
-    while(!UART1_IsTxReady());
-    UART1_Write(data);   
-}
-
 void write(char *pt, uint8_t length){
     int i; 
     for(i=0; i<length; i++)
@@ -124,9 +119,9 @@ void process_message(void)
             PRINT_MEM(0, 1, true);
             break;
         
-        // 32 channel measurement
+        // multi-channel measurement
         case 's':
-            Intan_Meas_Multi_V2(true);
+            Intan_Meas_Multi_V2(2, true);
             break;
         
         case 'o':
