@@ -49,20 +49,16 @@ extern "C" {
 
 typedef enum{
     IDLE_PP,
-    ADDRESS_PP,
+    ADDRESS0_PP,
+    ADDRESS1_PP,
+    ADDRESS2_PP,        
     WRITE_PP,
     END_PP, 
 }SST26VF016B_PP;
 
-typedef enum{
-    IDLE_WREN,
-    END_WREN,
-}SST26VF016B_WREN;
 
 extern volatile SST26VF016B_PP State_PP;
-extern volatile SST26VF016B_WREN State_WREN;
-extern int cnt_addr, cnt_data;
-extern uint8_t Rx_SPI2;
+extern int cnt_data;
 extern uint8_t wdata[6]; 
 extern uint8_t Write_Addr[3];
 
@@ -79,7 +75,6 @@ void READ_MEM_256(uint32_t addr, uint8_t *data);
 void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data);
 void Writing_State_Initialize(void);
 void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data);
-void SPI2_NoWait_getByte(uint8_t data);
 void PAGE_PROGRAM_NoWait(void);
 void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);

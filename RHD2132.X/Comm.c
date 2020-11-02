@@ -19,9 +19,7 @@ void process_message(void)
 {
     uint8_t message;
     message = UART1_Read();
-//  uint8_t rdata[6];
-//    int i;
-    
+     
     switch(message){
         
         //verified
@@ -57,7 +55,7 @@ void process_message(void)
         // verified, but not working with the use of dynamic memory allocation  
         
         case 'd': // test storing data into the flash memory and fetching data from the flash memory    
-              
+           
             if(TEST_WRITE_READ())
                 _put("pass\n");
             else

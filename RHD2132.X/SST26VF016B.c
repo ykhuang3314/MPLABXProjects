@@ -10,11 +10,9 @@
 
 
 uint8_t Write_Addr[3];
-int cnt_addr, cnt_data;
-uint8_t Rx_SPI2;
+int cnt_data;
 uint8_t wdata[6];
 volatile SST26VF016B_PP State_PP;
-volatile SST26VF016B_WREN State_WREN;
 
 uint8_t READ_STATUS_REG(void){
     
@@ -237,6 +235,7 @@ void LOCK_PROTECTION(void){
 
 
 void UNLOCK_PROTECTION(void){
+    
     uint8_t CMD, Rx;
     CMD = ULBPR;
     //prior to unlock block protection, execute write enable
@@ -299,12 +298,6 @@ bool TEST_COMM_MEM(void){
 void Writing_State_Initialize(void){
     
     State_PP = IDLE_PP;
-    State_WREN = IDLE_WREN;
-    //IFS2bits.SPI2IF = 0;
-}
-
-void SPI2_NoWait_getByte(uint8_t data){
-    Rx_SPI2 = data;
 }
 
 void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
@@ -321,33 +314,40 @@ void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
     
     memcpy(wdata, data, 6);
     
-    cnt_addr = 3;
     cnt_data = 6;
     
     //clear flags
-    //IFS2bits.SPI2IF = 0;
-    //SPI2STATbits.SPIROV = 0;
-    //SPI2STATbits.SPITBF = 0;
+    IFS2bits.SPI2IF = 0;
+    SPI2STATbits.SPIROV = 0;
+    SPI2STATbits.SPITBF = 0;
+    
 }
 
 void WRITE_ENABLE_NoWait(void){
     
-    switch(State_WREN){
-        
-        case IDLE_WREN:
-            CS2_SetLow();
-            spi2_exchangeByte_NoWait(WREN);
-            State_WREN = END_WREN;
-            break;
-        
-        case END_WREN:
-            CS2_SetHigh();
-            State_WREN = IDLE_WREN;
-            MEM_SPI_State = SPI2_IDLE;
-            break;
-            
-        default:
-            break;
+    //clear flags
+    IFS2bits.SPI2IF = 0;
+    SPI2STATbits.SPIROV = 0;
+    SPI2STATbits.SPITBF = 0;
+    
+    bool flagrun;
+    flagrun = true;
+    CS2_SetLow();
+    spi2_exchangeByte_NoWait(WREN);
+    
+    while(flagrun){
+        if(MEM_SPI_State == SPI2_EXCHANGE){
+               if(IFS2bits.SPI2IF){ 
+                    IFS2bits.SPI2IF = 0;    
+                    MEM_SPI_State = SPI2_IDLE;
+                    //Need to read receive buffer such that the hardware clear SPIRBF bit
+                    //or clear the receive overflow flag bit manually to make it work.
+                    //dummy = SPI2BUF;
+                    SPI2STATbits.SPIROV = 0;
+                    CS2_SetHigh();
+                    flagrun = false;
+                }
+        }
     }
 }
 
@@ -358,16 +358,22 @@ void PAGE_PROGRAM_NoWait(void){
         case IDLE_PP: // Send page program command
             CS2_SetLow();
             spi2_exchangeByte_NoWait(PP);
-            State_PP = ADDRESS_PP;
+            State_PP = ADDRESS0_PP;
             break;
-           
-        case ADDRESS_PP: // Send 3byte Address for writing (MSB first)
-            spi2_exchangeByte_NoWait(Write_Addr[3-cnt_addr]);
-            cnt_addr--;
-            if(cnt_addr>0)
-                State_PP = ADDRESS_PP;           
-            else
-                State_PP = WRITE_PP;          
+        
+        case ADDRESS0_PP:
+            spi2_exchangeByte_NoWait(Write_Addr[0]);
+            State_PP = ADDRESS1_PP;
+            break;
+        
+        case ADDRESS1_PP:
+            spi2_exchangeByte_NoWait(Write_Addr[1]);
+            State_PP = ADDRESS2_PP;
+            break;
+
+        case ADDRESS2_PP:
+            spi2_exchangeByte_NoWait(Write_Addr[2]);
+            State_PP = WRITE_PP;
             break;
             
         case WRITE_PP: // Writing data
@@ -412,9 +418,6 @@ bool TEST_WRITE_READ(void){
     // Address
     wsec_no = 0; init_addr = 0;
     
-    // initialization for writing
-    Writing_Initialize(wsec_no, init_addr, wdata);
-    
     // To write data into memory, unlock block protection REG.
     UNLOCK_PROTECTION();
     
@@ -423,8 +426,11 @@ bool TEST_WRITE_READ(void){
     
     // Write data into memory
     flag_run = true;
-    WRITE_ENABLE();
-
+    WRITE_ENABLE_NoWait();
+    
+    // initialization for writing
+    Writing_Initialize(wsec_no, init_addr, wdata);
+    
     PAGE_PROGRAM_NoWait();
     while(flag_run){
         if(MEM_SPI_State == SPI2_EXCHANGE){
@@ -456,8 +462,8 @@ bool TEST_WRITE_READ(void){
         TestResult &= (rdata[i] == wdata[i]);
         results[i] = (char)rdata[i];
     }
-    _put(results);
-    _put("\n");
+    //_put(results);
+    //_put("\n");
     return TestResult;
 }
 
