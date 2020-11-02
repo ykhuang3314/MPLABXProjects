@@ -15,15 +15,6 @@ void _put(char *pt)
     }
 }
 
-void write(char *pt, uint8_t length){
-    int i; 
-    for(i=0; i<length; i++)
-    {
-        while(!UART1_IsTxReady());
-        UART1_Write(pt[i]);
-    }
-}
-
 void process_message(void)
 {
     uint8_t message;
@@ -40,27 +31,16 @@ void process_message(void)
         
         // verified
         case 'r': // test spi communication with INTAN chip
-            if(Intan_SPI_Test())
+            if(Intan_SPI_NoWait_Test())
                 _put("pass\n");
             else
                 _put("fail\n");
             break;
-        
-        /* function verified
-        case 'w': //test spi by writing REG0
-            
-            if(Intan_WriteREG(0, 0xDE))
-                _put("pass\n");
-            else
-                _put("fail\n");
-            break;
-        */
-        
             
         // verified    
         case 'i': // Intan Initialization including REG configuration and ADC calibration
             if(Intan_Initialization(1000))
-                _put("pass\n");
+                _put("done\n");
             else
                 _put("fail\n");
             break;
@@ -83,23 +63,6 @@ void process_message(void)
             else
                 _put("fail\n");    
             break;
-        
-        //Test for erasing memory and reading data from memory    
-        // verified
-        /*
-        case 'e':
-            UNLOCK_PROTECTION();
-            SECTOR_ERASE(0, true);
-            break;
-        
-        case 'R':
-            READ_MEM_TEST(0, rdata);
-            if(rdata[0] == 0xFF)
-                _put("pass \n");
-            else
-                _put("fail \n");
-            break;       
-        */
         
         case 'e':
             // Unlock the memory and erase the chip

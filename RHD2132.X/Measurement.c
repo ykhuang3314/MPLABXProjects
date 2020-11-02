@@ -27,7 +27,6 @@ void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     }
 }
 
-
 void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag){
     
     uint16_t CMD;
@@ -48,7 +47,7 @@ void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, ui
     uint16_t address; // address within a memory sector
     address = init_addr;
     
-    _put("start");
+    _put("start\n");
     while(flag){
         
         //ignore the received data in first two cycle
@@ -159,7 +158,7 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
         }
     }
 }
-
+/*
 void Intan_Meas_Multi(bool flag){
     
     // CONVERT(63) is used to cycle through successive amplifier channels.
@@ -241,7 +240,7 @@ void Intan_Meas_Multi(bool flag){
         }
     }
 }
-
+*/
 void Intan_Meas_Multi_V2(int no_sec, bool flag){
     
     // Execute multi-channel measurement manually

@@ -48,8 +48,8 @@
 
 void CLOCK_Initialize(void)
 {
-    // RCDIV FRC/2; DOZE 1:8; DOZEN disabled; ROI disabled; 
-    CLKDIV = 0x3100;
+    // RCDIV FRC/1; DOZE 1:8; DOZEN disabled; ROI disabled; 
+    CLKDIV = 0x3000;
     // TUN Center frequency; 
     OSCTUN = 0x00;
     // ROEN disabled; ROSEL FOSC; RODIV 0; ROSSLP disabled; 

@@ -4,17 +4,12 @@
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
 #include "Intan_RHD2132.h"
+#include "SPI_nowait.h"
 
-
-void DataExchange16bitTest(uint16_t data)
-{
-    //Testing for 16bit SPI 
-    uint16_t tmp; UNUSED(tmp);
-    CS1_SetLow();
-    tmp = SPI1_Exchange16bit(data);
-    CS1_SetHigh();
-}
-
+volatile RHD2132_CONVERT State_Conv;
+volatile RHD2132_ReadReg State_RR;
+uint16_t Cmd_Conv;
+uint16_t Cmd_Read;
 
 uint16_t Intan_ReadREG(uint16_t addr)
 {
@@ -37,6 +32,110 @@ uint16_t Intan_ReadREG(uint16_t addr)
     return Rx_buf[2];
 }
 
+void Intan_State_Initialize(void){
+    
+    State_RR = IDLE_RR;
+}
+
+void Intan_ReadREG_NoWait(void){
+    
+    switch(State_RR){
+        
+        case(IDLE_RR):
+            SetReadCMD(40);
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Cmd_Read);
+            State_RR = READ41;
+            break;
+    
+        case(READ41):
+            SetReadCMD(41);
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Cmd_Read);
+            State_RR = READ42;
+            break;
+        
+        case(READ42):
+            SetReadCMD(42);
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Cmd_Read);
+            State_RR = READ43;
+            break;
+        
+        case(READ43):
+            SetReadCMD(43);
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Cmd_Read);
+            State_RR = READ44;
+            break;
+            
+        case(READ44):
+            SetReadCMD(44);
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Cmd_Read);
+            State_RR = DUMMY1;
+            break;    
+        
+        case(DUMMY1):
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Dummy_CMD);
+            State_RR = DUMMY2;
+            break;
+        
+        case(DUMMY2):
+            CS1_SetLow();
+            SPI1_Exchange16bit_NoWait(Dummy_CMD);
+            State_RR = END_RR;
+            break;
+        
+        case(END_RR):
+            State_RR = IDLE_RR;
+            INTAN_SPI_State = SPI1_IDLE;
+            break;
+            
+        default:
+            break;
+    } 
+}
+
+bool Intan_SPI_NoWait_Test(void){
+    
+    uint16_t Rx_buf[7];
+    bool TestResult, flag_run;
+    int i;
+    
+    i = 0;
+    flag_run = true;
+    
+    Intan_ReadREG_NoWait();
+       
+    while(flag_run){
+        if(INTAN_SPI_State == SPI1_EXCHANGE){
+            if(IFS0bits.SPI1IF){ 
+                IFS0bits.SPI1IF = 0;
+                CS1_SetHigh();
+                INTAN_SPI_State = SPI1_IDLE;
+                //Need to read receive buffer such that the hardware clear SPIRBF bit
+                //or clear the receive overflow flag bit manually to make it work.
+                Rx_buf[i] = SPI1BUF;
+                i++;
+                Intan_ReadREG_NoWait();                 
+            }
+        }
+        else{
+            flag_run = false;
+        }
+    }
+    
+    TestResult = ((Rx_buf[2] & 0x00FF) == 0x0049);
+    TestResult &= ((Rx_buf[3] & 0x00FF) == 0x004E);
+    TestResult &= ((Rx_buf[4] & 0x00FF) == 0x0054);
+    TestResult &= ((Rx_buf[5] & 0x00FF) == 0x0041);
+    TestResult &= ((Rx_buf[6] & 0x00FF) == 0x004E);
+    
+    return TestResult;
+}
+
 bool Intan_SPI_Test(void)
 {
     //Read REG40-44 to verify the fidelity of the SPI interface
@@ -46,7 +145,6 @@ bool Intan_SPI_Test(void)
     bool TestResult;
     
     addr = 40;
-    
     int i;
     for(i=0; i<7; i++)
     {
@@ -102,7 +200,7 @@ bool Intan_WriteREG(uint16_t addr, uint16_t data)
     else
         return false;        
 }
-
+/*
 uint16_t Intan_Convert_Single(uint16_t channel)
 {
     //read result from single channel
@@ -113,6 +211,17 @@ uint16_t Intan_Convert_Single(uint16_t channel)
     Rx = SPI1_Exchange16bit(CMD);
     CS2_SetHigh();
     return Rx;
+}
+*/
+
+void SetConvertCMD(uint16_t channel){
+    
+    Cmd_Conv = CONVERT_CMD | (channel << 8);
+}
+
+void SetReadCMD(uint16_t REG_Addr){
+    
+    Cmd_Read = READ_CMD | (REG_Addr<<8);
 }
 
 void Intan_ADC_Calibrate(void)
@@ -321,7 +430,6 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     for(i = 0; i < 18; i++)
     {   
         CMD = WRITE_CMD | (i << 8) | Tx_buf[i];
-        //__delay_us(1);
         CS1_SetLow();
         tmp = SPI1_Exchange16bit(CMD);
         CS1_SetHigh();

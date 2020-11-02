@@ -44,18 +44,43 @@ extern "C" {
 
 //Mask for address
 #define SECTOR_MASK 0xFFFFF000 // one sector contains 4kbyte     
-#define ADDRESS_MASK 0x00000FFF // the address within a sector 
+#define ADDRESS_MASK 0x00000FFF // the address within a sector
     
+
+typedef enum{
+    IDLE_PP,
+    ADDRESS_PP,
+    WRITE_PP,
+    END_PP, 
+}SST26VF016B_PP;
+
+typedef enum{
+    IDLE_WREN,
+    END_WREN,
+}SST26VF016B_WREN;
+
+extern volatile SST26VF016B_PP State_PP;
+extern volatile SST26VF016B_WREN State_WREN;
+extern int cnt_addr, cnt_data;
+extern uint8_t Rx_SPI2;
+extern uint8_t wdata[6]; 
+extern uint8_t Write_Addr[3];
+
+
 uint8_t READ_STATUS_REG(void);
 void JEDECID(uint8_t *data);
 bool IS_BUSY(void);
 bool IS_WRITEABLE(void);
 void WRITE_ENABLE(void);
 void WRITE_DISABLE(void);
-void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n);
+//void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n);
 void READ_MEM_256(uint32_t addr, uint8_t *data);
-void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n);
+//void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n);
 void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data);
+void Writing_State_Initialize(void);
+void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data);
+void SPI2_NoWait_getByte(uint8_t data);
+void PAGE_PROGRAM_NoWait(void);
 void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
@@ -66,7 +91,6 @@ void CHIP_ERASE (bool flagwait);
 bool TEST_COMM_MEM (void); 
 bool TEST_WRITE_READ(void);
 void READ_MEM_TEST(uint32_t addr, uint8_t *data);
-void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data);
 
 
 #ifdef	__cplusplus

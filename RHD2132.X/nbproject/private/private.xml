@@ -5,11 +5,14 @@
         <group>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/SST26VF016B.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Measurement.h</file>
+            <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/mcc_generated_files/uart1.c</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/main.c</file>
+            <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/SPI_nowait.c</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Comm.c</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Intan_RHD2132.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Comm.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Measurement.c</file>
+            <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/SPI_nowait.h</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/SST26VF016B.c</file>
             <file>file:/home/ykhuang/MPLABXProjects/RHD2132.X/Intan_RHD2132.c</file>
         </group>

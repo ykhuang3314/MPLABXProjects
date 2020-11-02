@@ -13,7 +13,6 @@ extern "C" {
 #endif
 
 void _put(char *pt);
-void write(char *pt, uint8_t length);
 void process_message(void);
 
 #ifdef	__cplusplus

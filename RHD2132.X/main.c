@@ -52,28 +52,37 @@
 #include "Comm.h"
 #include "SST26VF016B.h"
 #include "Measurement.h"
+#include "SPI_nowait.h"
 /*
                          Main application
  */
 
 int main(void)
 {
-
     // initialize the device
     SYSTEM_Initialize();
     __delay_ms(100);
     
     spi2_open(SPI2_DEFAULT);
     CS2_SetHigh();
-    //CS1_SetHigh();
+    CS1_SetHigh();
+    
+    // Initialize the state flag for spi no wait mode
+    Writing_State_Initialize();
+    spi2_NoWait_Initialize();
+    
+    SPI1_NoWait_Initialize();
+    Intan_State_Initialize();
+    //Unlock block protection register 
+    //UNLOCK_PROTECTION();
     
     while(1)
     {
         // Add your application code
-        if(UART1_IsRxReady()){
-            process_message();
-        }    
         
+        if(UART1_IsRxReady()){
+            process_message();           
+        }
     }
 
     return 1;

@@ -6,6 +6,15 @@
 #define FCY _XTAL_FREQ/2
 #include "libpic30.h"
 #include "Comm.h"
+#include "SPI_nowait.h"
+
+
+uint8_t Write_Addr[3];
+int cnt_addr, cnt_data;
+uint8_t Rx_SPI2;
+uint8_t wdata[6];
+volatile SST26VF016B_PP State_PP;
+volatile SST26VF016B_WREN State_WREN;
 
 uint8_t READ_STATUS_REG(void){
     
@@ -86,6 +95,7 @@ void WRITE_DISABLE(void){
 }
 
 // having issue with dynamic memory allocation
+/*
 void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     
     uint8_t *Tx_buf;
@@ -114,7 +124,7 @@ void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
     free(Tx_buf);
     free(Rx_buf);
 }
-
+*/
 void READ_MEM_256(uint32_t addr, uint8_t *data){
     
     int data_size;
@@ -143,6 +153,8 @@ void READ_MEM_256(uint32_t addr, uint8_t *data){
 }
 
 // having issue with dynamic memory allocation
+
+/*
 void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n){
     
     // Starting address
@@ -176,6 +188,7 @@ void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n){
     
     free(Tx_buf);
 }
+*/
 
 void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data){
     
@@ -283,14 +296,109 @@ bool TEST_COMM_MEM(void){
         return false;
 }
 
+void Writing_State_Initialize(void){
+    
+    State_PP = IDLE_PP;
+    State_WREN = IDLE_WREN;
+    //IFS2bits.SPI2IF = 0;
+}
+
+void SPI2_NoWait_getByte(uint8_t data){
+    Rx_SPI2 = data;
+}
+
+void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
+    
+    // Starting address
+    uint32_t address;
+    address = sec_no;
+    address <<= 12;
+    address += addr;
+    
+    Write_Addr[0] = (address >> 16) & 0xFF;
+    Write_Addr[1] = (address >> 8) & 0xFF;
+    Write_Addr[2] = address & 0xFF;
+    
+    memcpy(wdata, data, 6);
+    
+    cnt_addr = 3;
+    cnt_data = 6;
+    
+    //clear flags
+    //IFS2bits.SPI2IF = 0;
+    //SPI2STATbits.SPIROV = 0;
+    //SPI2STATbits.SPITBF = 0;
+}
+
+void WRITE_ENABLE_NoWait(void){
+    
+    switch(State_WREN){
+        
+        case IDLE_WREN:
+            CS2_SetLow();
+            spi2_exchangeByte_NoWait(WREN);
+            State_WREN = END_WREN;
+            break;
+        
+        case END_WREN:
+            CS2_SetHigh();
+            State_WREN = IDLE_WREN;
+            MEM_SPI_State = SPI2_IDLE;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+void PAGE_PROGRAM_NoWait(void){
+    
+    switch(State_PP){
+        
+        case IDLE_PP: // Send page program command
+            CS2_SetLow();
+            spi2_exchangeByte_NoWait(PP);
+            State_PP = ADDRESS_PP;
+            break;
+           
+        case ADDRESS_PP: // Send 3byte Address for writing (MSB first)
+            spi2_exchangeByte_NoWait(Write_Addr[3-cnt_addr]);
+            cnt_addr--;
+            if(cnt_addr>0)
+                State_PP = ADDRESS_PP;           
+            else
+                State_PP = WRITE_PP;          
+            break;
+            
+        case WRITE_PP: // Writing data
+            spi2_exchangeByte_NoWait(wdata[6-cnt_data]);
+            cnt_data--;
+            if(cnt_data>0)
+                State_PP = WRITE_PP;          
+            else
+                State_PP = END_PP;
+            break;
+        
+        case END_PP:
+            CS2_SetHigh();
+            State_PP = IDLE_PP;
+            MEM_SPI_State = SPI2_IDLE;
+            _put("done\n");
+            break;
+            
+        default:
+            break;
+    }
+}
 
 bool TEST_WRITE_READ(void){
     
-    bool TestResult;
+    bool TestResult, flag_run;
     
     uint16_t data_size, wsec_no, init_addr;
     data_size = 6;
     uint8_t wdata[data_size], rdata[data_size];
+    //uint8_t dummy;
     
     wdata[0] = 'K';
     wdata[1] = 'T';
@@ -299,11 +407,13 @@ bool TEST_WRITE_READ(void){
     wdata[4] = 'M';
     wdata[5] = 'G';
     
-    char results[data_size+1];
-    results[6] = 0x00; // Null
+    char results[data_size];
     
     // Address
     wsec_no = 0; init_addr = 0;
+    
+    // initialization for writing
+    Writing_Initialize(wsec_no, init_addr, wdata);
     
     // To write data into memory, unlock block protection REG.
     UNLOCK_PROTECTION();
@@ -312,13 +422,32 @@ bool TEST_WRITE_READ(void){
     SECTOR_ERASE(wsec_no, true);    
     
     // Write data into memory
-    //PAGE_PROGRAM (wsec_no, init_addr, wdata, data_size);
-    PAGE_PROGRAM_TEST (wsec_no, init_addr, wdata);
+    flag_run = true;
+    WRITE_ENABLE();
+
+    PAGE_PROGRAM_NoWait();
+    while(flag_run){
+        if(MEM_SPI_State == SPI2_EXCHANGE){
+            if(IFS2bits.SPI2IF){ 
+                IFS2bits.SPI2IF = 0;    
+                MEM_SPI_State = SPI2_IDLE;
+                //Need to read receive buffer such that the hardware clear SPIRBF bit
+                //or clear the receive overflow flag bit manually to make it work.
+                //dummy = SPI2BUF;
+                SPI2STATbits.SPIROV = 0;
+                PAGE_PROGRAM_NoWait();                 
+            }
+        }
+        else{
+            flag_run = false;
+        }
+    }
+    
+    IS_BUSY();
     
     // Starting address for reading
     uint32_t addr;
     addr = (wsec_no << 12) | init_addr;
-    //READ_MEM(addr, rdata, data_size);
     READ_MEM_TEST(addr, rdata);
     
     int i;   
@@ -355,41 +484,4 @@ void READ_MEM_TEST(uint32_t addr, uint8_t *data){
     CS2_SetHigh();    
     memcpy(data, &Rx_buf[4], 6);
 }
-
-void PAGE_PROGRAM_TEST(uint16_t sec_no, uint16_t addr, uint8_t *data){
-    
-    int n;
-    n = 6;
-            
-    // Starting address
-    uint32_t address;
-    address = sec_no;
-    address <<= 12;
-    address += addr;
-    
-    //prior to page program, execute write enable
-    WRITE_ENABLE();
-    
-    // Write data
-    uint8_t Tx_buf[n+4];
-    uint8_t Rx;
-    
-    Tx_buf[0] = PP;
-    Tx_buf[1] = (address >> 16) & 0xFF;
-    Tx_buf[2] = (address >> 8) & 0xFF;
-    Tx_buf[3] = address & 0xFF;
-    memcpy(&Tx_buf[4], data, n);
-    
-    int i;
-    CS2_SetLow();
-    for(i=0; i<(n+4); i++){
-        Rx = spi2_exchangeByte(Tx_buf[i]);
-    }
-    CS2_SetHigh();
-    // waiting
-    while(IS_BUSY());
-
-}
-
-
 
