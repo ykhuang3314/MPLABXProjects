@@ -73,14 +73,15 @@ void WRITE_DISABLE(void);
 void READ_MEM_256(uint32_t addr, uint8_t *data);
 //void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n);
 void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data);
-void Writing_State_Initialize(void);
-void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data);
-void PAGE_PROGRAM_NoWait(void);
 void LOCK_PROTECTION(void);
 void UNLOCK_PROTECTION(void);
 void SECTOR_ERASE (uint16_t sec_no, bool flagwait);
 void CHIP_ERASE (bool flagwait);
 
+void WRITE_ENABLE_NoWait(void);
+void Writing_State_Initialize(void);
+void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data);
+void PAGE_PROGRAM_NoWait(void);
 
 // functions for testing purpose
 bool TEST_COMM_MEM (void); 
