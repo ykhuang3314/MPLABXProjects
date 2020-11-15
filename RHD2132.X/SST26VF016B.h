@@ -59,7 +59,7 @@ typedef enum{
 
 extern volatile SST26VF016B_PP State_PP;
 extern int cnt_data;
-extern uint8_t wdata[6]; 
+extern uint8_t wdata[32]; 
 extern uint8_t Write_Addr[3];
 
 
@@ -87,7 +87,7 @@ void PAGE_PROGRAM_NoWait(void);
 bool TEST_COMM_MEM (void); 
 bool TEST_WRITE_READ(void);
 void READ_MEM_TEST(uint32_t addr, uint8_t *data);
-
+void Test_write_initialize(void);
 
 #ifdef	__cplusplus
 }

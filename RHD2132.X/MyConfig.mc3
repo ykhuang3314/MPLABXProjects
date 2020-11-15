@@ -1,6 +1,10 @@
 <config configVersion="1.1" device="PIC24FV16KA302" coreVersion="4.85.0">
    <usedClasses class="java.util.HashMap">
       <entry>
+         <string>System Module</string>
+         <string>class com.microchip.mcc.mcu16.systemManager.DefaultSystemManagerMcu16</string>
+      </entry>
+      <entry>
          <string>SPI2</string>
          <string>class com.microchip.mcc.foundationservices.mcu16.modules.peripheraldriver.spi.SPI</string>
       </entry>
@@ -13,40 +17,36 @@
          <string>class com.microchip.mcc.mcu16.modules.spi.SPI</string>
       </entry>
       <entry>
-         <string>Pin Module</string>
-         <string>class com.microchip.mcc.mcu16.pinManager.PinManager</string>
+         <string>INTERNAL OSCILLATOR</string>
+         <string>class com.microchip.mcc.mcu16.systemManager.clk.Clock</string>
       </entry>
       <entry>
          <string>WATCHDOG</string>
          <string>class com.microchip.mcc.mcu16.systemManager.wdt.Wdt</string>
       </entry>
       <entry>
-         <string>RESET</string>
-         <string>class com.microchip.mcc.mcu16.systemManager.reset.RESET</string>
+         <string>Pin Module</string>
+         <string>class com.microchip.mcc.mcu16.pinManager.PinManager</string>
       </entry>
       <entry>
          <string>ICD</string>
          <string>class com.microchip.mcc.mcu16.systemManager.icd.Icd</string>
       </entry>
       <entry>
+         <string>RESET</string>
+         <string>class com.microchip.mcc.mcu16.systemManager.reset.RESET</string>
+      </entry>
+      <entry>
          <string>Interrupt Module</string>
          <string>class com.microchip.mcc.mcu16.interruptManager.InterruptManager</string>
       </entry>
       <entry>
-         <string>UART1</string>
-         <string>class com.microchip.mcc.mcu16.modules.uart.UART</string>
-      </entry>
-      <entry>
-         <string>System Module</string>
-         <string>class com.microchip.mcc.mcu16.systemManager.DefaultSystemManagerMcu16</string>
-      </entry>
-      <entry>
-         <string>INTERNAL OSCILLATOR</string>
-         <string>class com.microchip.mcc.mcu16.systemManager.clk.Clock</string>
-      </entry>
-      <entry>
          <string>com.microchip.mcc.mcu16.Mcu16PeripheralLibraryLibraryModule</string>
          <string>class com.microchip.mcc.protocolServices.base.modules.librarymodule.LibraryModule</string>
+      </entry>
+      <entry>
+         <string>UART1</string>
+         <string>class com.microchip.mcc.mcu16.modules.uart.UART</string>
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
@@ -1764,7 +1764,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPI2" name="SpiClockFrequency"/>
-         <value>125</value>
+         <value>1500</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="UART1" registerAlias="UMODE" settingAlias="RTSMD" alias="disabled"/>
@@ -3336,7 +3336,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPI2" name="CalcSpiClockFrequency"/>
-         <value>125.0</value>
+         <value>1333.333</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN22PUE" alias="disabled"/>
@@ -3532,7 +3532,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="SPI1" registerAlias="SPICON1"/>
-         <value>1314</value>
+         <value>1330</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="INTERNAL OSCILLATOR" registerAlias="PMD2" settingAlias="OC1MD" alias="enabled"/>
@@ -3864,7 +3864,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="SPI1" registerAlias="SPICON1" settingAlias="SPRE"/>
-         <value>8:1</value>
+         <value>4:1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="INTERNAL OSCILLATOR" registerAlias="OSCCON" settingAlias="SOSCEN" alias="disabled"/>
@@ -5196,7 +5196,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPI1" name="ClockFrequency"/>
-         <value>500000.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</value>
+         <value>1000000.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="CNPU1" settingAlias="CN6PUE" alias="disabled"/>
@@ -5617,44 +5617,44 @@
          <hash>e44cc54f2b89729ccc8ca925d5b667f2e79f81f7a2cd00a931f24a1c6ddebac6</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files/pin_manager.h</file>
-         <hash>e1182851ba310a0d1cc835019f01d0fb8e37033d64de08313704f0ca510f8e34</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files/spi2_driver.c</file>
-         <hash>94e43428c2b20422fcbeb2f125712d60754ce735b49d4b9052ad708f0c4d2817</hash>
+         <hash>5ab2816d235eb8929e75911c4c02cc7ee1d12ff06347df59fc005e23a73d8711</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/spi1.c</file>
-         <hash>d7c829977c8d0b9282af09e19f50f92e704a922003dc935ca437ab37364c32a9</hash>
+         <hash>a02e77b6dcc7d890ce13980a6cbd690f1fcdbaf86883f9c46284acc82170e81d</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/pin_manager.h</file>
+         <hash>e1182851ba310a0d1cc835019f01d0fb8e37033d64de08313704f0ca510f8e34</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/uart1.h</file>
          <hash>b76c82a63b9ba7aba8a7bcd3578f92bbf3e6cb325c11339db1df651dca5edc38</hash>
       </entry>
       <entry>
+         <file>mcc_generated_files/system.c</file>
+         <hash>2565f6c32140a4380d0e0655604ac3cda4eae9d35a9f13c6f4fd8e6e32ebb920</hash>
+      </entry>
+      <entry>
          <file>main.c</file>
          <hash>04380c7055d4d921820874817d63a34cd8613c123d945ad2a3baba3e077b32fb</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files/system.c</file>
-         <hash>6e6abf59fadf8ac1d19605c7426535182e2d05cbd4e9dbdbb04427c487277722</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files/traps.h</file>
-         <hash>ab30deeed011fbdcf276289ef1e7a9cac5792c94fd385021703fd5984bbafb42</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/clock.h</file>
          <hash>90e608c490eadaeda6a53faf36372ba428fbaae910547ced650f4fd8f0b092cb</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files/traps.c</file>
-         <hash>242a75cc851de841ebca846d2cc43011e264d80fef016bb6cf8366c6493e8db5</hash>
+         <file>mcc_generated_files/traps.h</file>
+         <hash>ab30deeed011fbdcf276289ef1e7a9cac5792c94fd385021703fd5984bbafb42</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/clock.c</file>
          <hash>33071bf7bf4b4493d9971796a8ea2cb89258e38e7003d043f5b09b79646b62c4</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/traps.c</file>
+         <hash>242a75cc851de841ebca846d2cc43011e264d80fef016bb6cf8366c6493e8db5</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/spi1.h</file>
@@ -5662,7 +5662,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.h</file>
-         <hash>fb18a3e353efdc35e99b08dcba37202a15a0430acaaa8666fbf7d7a9253e3223</hash>
+         <hash>3bc255387b201edc1196323fdd1e352e52a1fb06c1430337da8f63447311dd36</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/system.h</file>
@@ -5677,20 +5677,20 @@
          <hash>d9b364ee7c69868b2b14e0d7faf8b177464cd0a86cbb47f0d63f3857f878cf63</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files/uart1.c</file>
-         <hash>2bd6111c535cc6422ae9348133628741443ef90faad9742f3a02c1a8f061003a</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files/mcc.c</file>
          <hash>ed4c6a5a5401d0d824000b4ef882907711087647a50e339447abb9d41299f767</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files/pin_manager.c</file>
-         <hash>0f190c7bce5ffc1fe566b022767586509f09721a44909134973caa521a520139</hash>
+         <file>mcc_generated_files/uart1.c</file>
+         <hash>2bd6111c535cc6422ae9348133628741443ef90faad9742f3a02c1a8f061003a</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/spi2_driver.h</file>
          <hash>48f91a78d9af350fd8a2de2c990298b4daeecbd6b3bcee1c27fb699b2b40a3fc</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/pin_manager.c</file>
+         <hash>0f190c7bce5ffc1fe566b022767586509f09721a44909134973caa521a520139</hash>
       </entry>
    </generatedFileHashHistoryMap>
    <mc3libFileHashHistoryMap class="java.util.HashMap"/>

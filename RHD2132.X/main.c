@@ -69,8 +69,7 @@ int main(void)
     
     // Initialize the state flag for spi no wait mode
     Writing_State_Initialize();
-    spi2_NoWait_Initialize();
-    
+    spi2_NoWait_Initialize();   
     SPI1_NoWait_Initialize();
     Intan_State_Initialize();
     //Unlock block protection register 

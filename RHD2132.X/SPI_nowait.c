@@ -14,6 +14,16 @@ void spi2_exchangeByte_NoWait(uint8_t data){
     MEM_SPI_State = SPI2_EXCHANGE;
 }
 
+// Full Duplex SPI Functions
+/*
+uint8_t spi2_exchangeByte(uint8_t b)
+{
+    SPI2BUF = b;
+    while(!SPI2STATbits.SPIRBF);
+    return SPI2BUF;
+}
+*/
+
 void SPI1_NoWait_Initialize(void){
     
     INTAN_SPI_State = SPI1_IDLE; 

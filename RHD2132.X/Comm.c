@@ -15,11 +15,13 @@ void _put(char *pt)
     }
 }
 
+
 void process_message(void)
 {
     uint8_t message;
     message = UART1_Read();
-     
+
+    
     switch(message){
         
         //verified
@@ -53,7 +55,10 @@ void process_message(void)
             break;
         
         // verified, but not working with the use of dynamic memory allocation  
-        
+        case 'x':
+            Test_write_initialize();
+            break;
+            
         case 'd': // test storing data into the flash memory and fetching data from the flash memory    
            
             if(TEST_WRITE_READ())
@@ -69,11 +74,9 @@ void process_message(void)
             _put("done\n");
             break;
             
-        // Single channel measurement    
+        // Testing for converting 32 channel   
         case 'c': //converting data
-            
-            //Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag);
-            Intan_Meas_Single(0, 0, 0, 1, true);
+            Intan_Convert_NoWait_Test();
             break;
         
         case 'p': //print out data stored in memory
@@ -82,12 +85,9 @@ void process_message(void)
         
         // multi-channel measurement
         case 's':
-            Intan_Meas_Multi_V2(2, true);
+
             break;
         
-        case 'o':
-            PRINT_MEM(0, 512, true);
-            break;
             
         default:
             break;

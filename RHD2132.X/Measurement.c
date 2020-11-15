@@ -6,6 +6,7 @@
 #include "Comm.h"
 #include "SST26VF016B.h"
 #include "Intan_RHD2132.h"
+#include "SPI_nowait.h"
 
 void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     
@@ -27,105 +28,6 @@ void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     }
 }
 
-void Intan_Meas_Single(uint16_t channel, uint16_t sec_no, uint16_t init_addr, uint16_t end_sector, bool flag){
-    
-    uint16_t CMD;
-    CMD = CONVERT_CMD | (channel << 8);
-    
-    int data_size, count, count_mem;
-    data_size = 256; // maximum allowable bytes for single page program
-    uint16_t Rx_buf[data_size/2], dummy;
-    uint8_t wdata[data_size];
-            
-    count = 0; 
-    count_mem = 0;
-    
-    // Unlock the memory and erase the chip
-    UNLOCK_PROTECTION();
-    CHIP_ERASE(true);
-    
-    uint16_t address; // address within a memory sector
-    address = init_addr;
-    
-    _put("start\n");
-    while(flag){
-        
-        //ignore the received data in first two cycle
-        if(count < 2){
-            CS1_SetLow();
-            dummy = SPI1_Exchange16bit(CMD);
-            CS2_SetHigh();
-            count++;
-        }
-        else{
-            if(count_mem < data_size/2){
-                CS1_SetLow();
-                Rx_buf[count_mem] = SPI1_Exchange16bit(CMD);
-                CS1_SetHigh();
-                count_mem++;              
-            }
-            else{
-                count_mem = 0;
-                //unlock block protection reg to write data
-                UNLOCK_PROTECTION();
-                //convert 16-bit data array to 8-bit data array (MSB first)
-                CONVERT_16_to_8(Rx_buf, wdata, data_size/2);
-                //dump the data into memory once 256byte data is received 
-                PAGE_PROGRAM_256(sec_no, address, wdata);
-                //increase starting address
-                address += 256;
-                //once the address exceed 4K, move onto next memory sector
-                if(address > 4095){
-                    address = 0;
-                    sec_no += 1;
-                }
-                if(sec_no > end_sector || sec_no > 512){ // 512 4Kbyte sector are available for storing data 
-                    flag = false;
-                    _put("done\n");
-                }
-            }
-        }
-    }
-}
-
-
-void Data_Print(uint8_t Din_MSB, uint8_t Din_LSB, char *Result){
-    
-    // 16bit ADC value
-    uint16_t Data;
-    Data = Din_MSB;
-    Data <<= 8;
-    Data += Din_LSB;
-
-    
-    // D/A conversion. Unit: uV
-    unsigned long long tmp;
-    unsigned long value;
-    unsigned short tmp2;
-    
-    //16bit resolution. Vref=1.2V, VLSB = 18.3uV
-    tmp = (unsigned long long)Data * 1200000ULL; 
-    value = (unsigned long)(tmp >> 16);
-    
-    // The resulting value is not correct. 
-    
-    // Convert value into char string with 3 decimals (unit: mV; range: 0000.000 ~ 1200.000)
-    int i;
-    
-    Result[8] = 0x00; // Null
-    
-    for (i=7; i>=0; i--){
-        if(i==4)
-            Result[i] = '.';
-        else{        
-            tmp2 = value%10;
-            value /= 10;       
-            //ASCII code for char 0-9: 48-59
-            Result[i] = (char)tmp2 + '0'; //'0'==48
-        }
-    }
-    
-}
 
 void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     
@@ -138,16 +40,13 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     end_addr = end_sector+1;
     end_addr <<= 12;
     
-    char Result[9];
-    
     //put("\n");
     while(flag){
         if(start_addr < end_addr){
             READ_MEM_256(start_addr, rdata);
-            for(i=0; i<data_size; i+=2){
+            for(i=0; i<data_size; i++){
                 // Display data on COM via UART
-                Data_Print(rdata[i], rdata[i+1], Result);
-                _put(Result);
+                _put((char*)rdata[i]);
                 _put("\n");
             }
             start_addr += 256;
@@ -158,173 +57,109 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
         }
     }
 }
-/*
-void Intan_Meas_Multi(bool flag){
+
+void Measurement_Multi32(uint16_t no_sec, bool flag){
     
-    // CONVERT(63) is used to cycle through successive amplifier channels.
+    int datasize;
+    datasize = 128;
     
-    uint16_t CMD, channel;
+    uint16_t result_16bit[datasize];
+    uint8_t result_8bit[2*datasize], dummy;
     
-    int data_size, no_channel;
-    data_size = 256; // maximum allowable bytes for single page program
+    int i;
+    bool flag_intan, flag_mem;
+    i = 0;
+    flag_intan = true;
     
-    // Execute CONVER(0) before CONVERT(63)
-    channel = 0;
-    CMD = CONVERT_CMD | (channel << 8);
-    uint16_t dummy;
-    
-    no_channel = 32;
-    uint16_t Rx_buf[no_channel][data_size/2];
-    uint8_t wdata[no_channel][data_size];
-    
-    int i, count_mem, cnt;
-    
-    uint16_t sec_no[no_channel];
-    uint16_t address;
-    // Data of Channel i is stored in memory sector 16i to 16(i+1)-1
-    // Avaliable memory for each channel is 16 sector (64KByte)
-    for(i=0; i<no_channel; i++){
-        sec_no[i] = 16*i;
-    }
-    address = 0;
-    count_mem = 0;
-    cnt = 0;
-    
-    // Unlock the memory and erase the chip before writing data
-    UNLOCK_PROTECTION();
-    CHIP_ERASE(true);
-    
-    CS1_SetLow();
-    dummy = SPI1_Exchange16bit(CMD);
-    CS1_SetHigh();
-    
-    channel = 63;
-    CMD = CONVERT_CMD | (channel << 8);
-    
-    CS1_SetLow();
-    dummy = SPI1_Exchange16bit(CMD);
-    CS1_SetHigh();
-    
-    _put("start\n");
-    while(flag){ 
-        
-        if(count_mem < data_size/2){
-            for(i=0; i<no_channel; i++){            
-                CS1_SetLow();
-                Rx_buf[i][count_mem] = SPI1_Exchange16bit(CMD);
+    Intan_CONVERT32();
+       
+    while(flag_intan){
+        if(INTAN_SPI_State == SPI1_EXCHANGE){
+            if(IFS0bits.SPI1IF){ 
+                IFS0bits.SPI1IF = 0;
                 CS1_SetHigh();
+                INTAN_SPI_State = SPI1_IDLE;
+                //Need to read receive buffer such that the hardware clear SPIRBF bit
+                //or clear the receive overflow flag bit manually to make it work.
+                result_16bit[i] = SPI1BUF;
+                i++;
+                if(i < datasize)
+                    Intan_CONVERT32();
+                else
+                    INTAN_SPI_State = SPI1_IDLE;
             }
-            count_mem++;
         }
         else{
-            count_mem = 0;
-            //unlock block protection reg to write data
-            UNLOCK_PROTECTION();
-            for(i=0; i<no_channel; i++){
-                //convert 16-bit data array to 8-bit data array (MSB first)
-                CONVERT_16_to_8(Rx_buf[i], wdata[i], data_size/2);
-                //dump the data into memory once 256byte data is received 
-                PAGE_PROGRAM_256((sec_no[i] + cnt), address, wdata[i]);
-            }
-            //increase starting address
-            address += 256;
-            //once the address exceed 4K, move onto next memory sector
-            if(address > 4095){
-                address = 0;
-                cnt += 1;
-            }
-            if(cnt == 16){
-                flag = false;
-                _put("done\n");
-            }
+            flag_intan = false;
         }
     }
-}
-*/
-void Intan_Meas_Multi_V2(int no_sec, bool flag){
     
-    // Execute multi-channel measurement manually
+    CONVERT_16_to_8(result_16bit, result_8bit, 128);
     
-    uint16_t CMD, channel;
     
-    int data_size, no_channel;
+    uint16_t addr, sec;
+    addr = 0;
+    sec = 0;
     
-    data_size = 256; // maximum allowable bytes for single page program command
-    no_channel = 2;   // taking measurement from channel 0 to channel (n-1)
-    
-    uint16_t Rx_buf[no_channel][data_size/2];
-    uint8_t wdata[no_channel][data_size];
-    
-    int i, count_mem, cnt;
-    
-    int16_t sec_no[no_channel];
-    uint16_t address; 
-    
-    address = 0; //always start from address 0 within a sector
-    
-    // Avaliable memory for each channel is 512/(no_channel) sector
-    for(i=0; i<no_channel; i++){
-        sec_no[i] = (512/no_channel)*i;
-    }
-    
-    count_mem = 0;
-    cnt = 0;
-    
-    // Unlock the memory and erase the chip before writing data
-    UNLOCK_PROTECTION();
-    CHIP_ERASE(true);
-    
-    //starting from the conversion of channel 0 and ignore the received data in the first two cycles
-    uint16_t dummy;
-    channel = 0;
-    
-    for(i=0; i<2; i++){
-        CMD = CONVERT_CMD | (channel << 8);
-        CS1_SetLow();
-        dummy = SPI1_Exchange16bit(CMD);
-        CS1_SetHigh();
-        channel++;
-    }    
-    _put("start\n");
     while(flag){
         
-        if(count_mem < data_size/2){
-            for(i=0; i<no_channel; i++){            
-                
-                CMD = CONVERT_CMD | (channel << 8);
-                CS1_SetLow();
-                Rx_buf[i][count_mem] = SPI1_Exchange16bit(CMD);
-                CS1_SetHigh();
-                
-                channel++;
-                if(channel == no_channel){
-                    channel = 0;
+        flag_intan = true;
+        flag_mem = true;  
+        
+        WRITE_ENABLE_NoWait();
+        PAGE_PROGRAM_NoWait();
+        Intan_CONVERT32();
+        
+        Writing_Initialize(sec, addr, result_8bit);
+       
+        while(flag_intan || flag_mem){         
+            
+            if(INTAN_SPI_State == SPI1_EXCHANGE){
+                if(IFS0bits.SPI1IF){ 
+                    IFS0bits.SPI1IF = 0;
+                    CS1_SetHigh();
+                    INTAN_SPI_State = SPI1_IDLE;
+                    //Need to read receive buffer such that the hardware clear SPIRBF bit
+                    //or clear the receive overflow flag bit manually to make it work.
+                    result_16bit[i] = SPI1BUF;
+                    i++;
+                    if(i == datasize){
+                        i = 0;
+                        INTAN_SPI_State = SPI1_IDLE;
+                    }
+                    else
+                        Intan_CONVERT32();
                 }
             }
-            count_mem++;
-        }
-        else{
+            else{
+                flag_intan = false;
+            }
             
-            count_mem = 0;
-            //unlock block protection reg to write data
-            UNLOCK_PROTECTION();
-            for(i=0; i<no_channel; i++){
-                //convert 16-bit data array to 8-bit data array (MSB first)
-                CONVERT_16_to_8(Rx_buf[i], wdata[i], data_size/2);
-                //dump the data into memory once 256byte data is received 
-                PAGE_PROGRAM_256((sec_no[i] + cnt), address, wdata[i]);
+            if(MEM_SPI_State == SPI2_EXCHANGE){
+                if(IFS2bits.SPI2IF){ 
+                    IFS2bits.SPI2IF = 0;    
+                    MEM_SPI_State = SPI2_IDLE;
+                    //Need to read receive buffer such that the hardware clear SPIRBF bit                
+                    dummy = SPI2BUF;                    
+                    PAGE_PROGRAM_NoWait();                 
+                }
             }
-            //increase starting address
-            address += 256;
-            //once the address exceed 4K, move onto next memory sector
-            if(address > 4095){
-                address = 0;
-                cnt += 1;
+            else{
+                flag_mem = false;
             }
-            if(cnt == (512/no_channel) || cnt == no_sec){
+        }
+        
+        CONVERT_16_to_8(result_16bit, result_8bit, 128);
+        addr += 256;
+        if(addr == 4096){
+            addr = 0;
+            sec +=1;
+            if(sec > no_sec){
+                _put("done");
                 flag = false;
-                _put("done\n");
             }
         }    
+        
     }
+    
 }

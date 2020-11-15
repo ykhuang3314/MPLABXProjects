@@ -11,7 +11,7 @@
 
 uint8_t Write_Addr[3];
 int cnt_data;
-uint8_t wdata[6];
+uint8_t wdata[32];
 volatile SST26VF016B_PP State_PP;
 
 uint8_t READ_STATUS_REG(void){
@@ -126,7 +126,7 @@ void READ_MEM(uint32_t addr, uint8_t *data, uint16_t n){
 void READ_MEM_256(uint32_t addr, uint8_t *data){
     
     int data_size;
-    data_size = 256;
+    data_size = 32;
     uint8_t Tx_buf[data_size+4];
         
     Tx_buf[0] = READ;
@@ -191,7 +191,7 @@ void PAGE_PROGRAM(uint16_t sec_no, uint16_t addr, uint8_t *data, uint16_t n){
 void PAGE_PROGRAM_256(uint16_t sec_no, uint16_t addr, uint8_t *data){
     
     int data_size;
-    data_size = 256;
+    data_size = 32;
             
     // Starting address
     uint32_t address;
@@ -303,6 +303,8 @@ void Writing_State_Initialize(void){
 void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
     
     // Starting address
+    int size;
+    size = 32;
     uint32_t address;
     address = sec_no;
     address <<= 12;
@@ -312,26 +314,24 @@ void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
     Write_Addr[1] = (address >> 8) & 0xFF;
     Write_Addr[2] = address & 0xFF;
     
-    memcpy(wdata, data, 6);
+    memcpy(wdata, data, size);
     
-    cnt_data = 6;
+    cnt_data = size;
     
     //clear flags
-    IFS2bits.SPI2IF = 0;
-    SPI2STATbits.SPIROV = 0;
-    SPI2STATbits.SPITBF = 0;
+    //IFS2bits.SPI2IF = 0;
+    //SPI2STATbits.SPIROV = 0;
+    //SPI2STATbits.SPITBF = 0;
     
 }
 
 void WRITE_ENABLE_NoWait(void){
     
-    //clear flags
-    IFS2bits.SPI2IF = 0;
-    SPI2STATbits.SPIROV = 0;
-    SPI2STATbits.SPITBF = 0;
-    
+    uint8_t dummy;
+
     bool flagrun;
     flagrun = true;
+
     CS2_SetLow();
     spi2_exchangeByte_NoWait(WREN);
     
@@ -342,8 +342,8 @@ void WRITE_ENABLE_NoWait(void){
                     MEM_SPI_State = SPI2_IDLE;
                     //Need to read receive buffer such that the hardware clear SPIRBF bit
                     //or clear the receive overflow flag bit manually to make it work.
-                    //dummy = SPI2BUF;
-                    SPI2STATbits.SPIROV = 0;
+                    dummy = SPI2BUF;
+                    //SPI2STATbits.SPIROV = 0;
                     CS2_SetHigh();
                     flagrun = false;
                 }
@@ -377,7 +377,7 @@ void PAGE_PROGRAM_NoWait(void){
             break;
             
         case WRITE_PP: // Writing data
-            spi2_exchangeByte_NoWait(wdata[6-cnt_data]);
+            spi2_exchangeByte_NoWait(wdata[32-cnt_data]);
             cnt_data--;
             if(cnt_data>0)
                 State_PP = WRITE_PP;          
@@ -397,23 +397,24 @@ void PAGE_PROGRAM_NoWait(void){
     }
 }
 
-bool TEST_WRITE_READ(void){
-    
-    bool TestResult, flag_run;
+void Test_write_initialize(void){
     
     uint16_t data_size, wsec_no, init_addr;
-    data_size = 6;
-    uint8_t wdata[data_size], rdata[data_size];
-    //uint8_t dummy;
+    data_size = 32;
     
-    wdata[0] = 'K';
-    wdata[1] = 'T';
-    wdata[2] = 'H';
-    wdata[3] = 'E';
-    wdata[4] = 'M';
-    wdata[5] = 'G';
+    uint8_t data[data_size];
     
-    char results[data_size];
+    data[0] = 'K';
+    data[1] = 'T';
+    data[2] = 'H';
+    data[3] = 'E';
+    data[4] = 'M';
+    data[5] = 'G';
+    
+    int i;
+    for(i=0; i<26; i++){
+        data[i+6] = 'A'+i;
+    }
     
     // Address
     wsec_no = 0; init_addr = 0;
@@ -422,25 +423,41 @@ bool TEST_WRITE_READ(void){
     UNLOCK_PROTECTION();
     
     // Erase memory array before writing
-    SECTOR_ERASE(wsec_no, true);    
+    SECTOR_ERASE(wsec_no, true);
+    
+    // initialization for writing
+    Writing_Initialize(wsec_no, init_addr, data);
+}
+
+bool TEST_WRITE_READ(void){
+    
+    uint16_t wsec_no, init_addr;
+    bool flag_run, TestResult;
+    
+    int data_size;
+    data_size = 32;
+    
+    uint8_t rdata[data_size], dummy;
     
     // Write data into memory
     flag_run = true;
-    WRITE_ENABLE_NoWait();
+    //WRITE_ENABLE_NoWait();
+    WRITE_ENABLE();
     
-    // initialization for writing
-    Writing_Initialize(wsec_no, init_addr, wdata);
+    // Address
+    wsec_no = 0; init_addr = 0;    
+    //PAGE_PROGRAM_256(wsec_no, init_addr, wdata);
+    
     
     PAGE_PROGRAM_NoWait();
+    
     while(flag_run){
         if(MEM_SPI_State == SPI2_EXCHANGE){
             if(IFS2bits.SPI2IF){ 
                 IFS2bits.SPI2IF = 0;    
                 MEM_SPI_State = SPI2_IDLE;
                 //Need to read receive buffer such that the hardware clear SPIRBF bit
-                //or clear the receive overflow flag bit manually to make it work.
-                //dummy = SPI2BUF;
-                SPI2STATbits.SPIROV = 0;
+                dummy = SPI2BUF;
                 PAGE_PROGRAM_NoWait();                 
             }
         }
@@ -449,45 +466,22 @@ bool TEST_WRITE_READ(void){
         }
     }
     
-    IS_BUSY();
+    IS_BUSY();   
+    
     
     // Starting address for reading
     uint32_t addr;
     addr = (wsec_no << 12) | init_addr;
-    READ_MEM_TEST(addr, rdata);
+    READ_MEM_256(addr, rdata);
     
-    int i;   
     TestResult = true;
+    int i;
     for(i=0; i<data_size; i++){
         TestResult &= (rdata[i] == wdata[i]);
-        results[i] = (char)rdata[i];
+       // results[i] = (char)rdata[i];
     }
     //_put(results);
     //_put("\n");
     return TestResult;
-}
-
-void READ_MEM_TEST(uint32_t addr, uint8_t *data){
-    
-    uint8_t Tx_buf[10];
-        
-    Tx_buf[0] = READ;
-    Tx_buf[1] = (addr >> 16) & 0xFF;
-    Tx_buf[2] = (addr >> 8) & 0xFF;
-    Tx_buf[3] = addr & 0xFF;
-    
-    int i;
-    for(i=4; i<10; i++){
-        Tx_buf[i] = NOP;
-    }
-    
-    uint8_t Rx_buf[10];
-
-    CS2_SetLow();
-    for(i=0; i<10; i++){
-        Rx_buf[i] = spi2_exchangeByte(Tx_buf[i]);
-    }
-    CS2_SetHigh();    
-    memcpy(data, &Rx_buf[4], 6);
 }
 
