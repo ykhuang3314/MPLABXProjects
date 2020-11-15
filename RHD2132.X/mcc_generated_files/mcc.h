@@ -52,10 +52,10 @@
 #include <stdbool.h>
 
 #include "uart1.h"
-#include "spi2_driver.h"
+#include "spi2.h"
+#include "spi1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "spi1.h"
 
 #warning "This file will be removed in future MCC releases. Use system.h instead."
 

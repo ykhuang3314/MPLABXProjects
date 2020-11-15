@@ -49,17 +49,25 @@ extern "C" {
 
 typedef enum{
     IDLE_PP,
-    ADDRESS0_PP,
-    ADDRESS1_PP,
-    ADDRESS2_PP,        
-    WRITE_PP,
+    ADDRESS_PP,       
+    WRITE_PP, 
     END_PP, 
 }SST26VF016B_PP;
 
+typedef enum{
+    CMD_ID,
+    DUMMY1_ID,
+    DUMMY2_ID,
+    DUMMY3_ID,
+    END_ID,
+}SST26VF016B_ID;
+
 
 extern volatile SST26VF016B_PP State_PP;
-extern int cnt_data;
-extern uint8_t wdata[32]; 
+extern volatile SST26VF016B_ID State_ID;
+extern int cnt_data, cnt_addr;
+extern uint8_t wdata[64];
+extern uint8_t status; 
 extern uint8_t Write_Addr[3];
 
 
@@ -88,6 +96,8 @@ bool TEST_COMM_MEM (void);
 bool TEST_WRITE_READ(void);
 void READ_MEM_TEST(uint32_t addr, uint8_t *data);
 void Test_write_initialize(void);
+void JEDECID_NoWait(void);
+bool TEST_COMM_NoWait(void);
 
 #ifdef	__cplusplus
 }

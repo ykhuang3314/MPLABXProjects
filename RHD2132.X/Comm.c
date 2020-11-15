@@ -20,7 +20,7 @@ void process_message(void)
 {
     uint8_t message;
     message = UART1_Read();
-
+    
     
     switch(message){
         
@@ -48,7 +48,7 @@ void process_message(void)
         // verified    
         case 'm': // test the communication between memory and pic
 
-            if(TEST_COMM_MEM())
+            if(TEST_COMM_NoWait())
                 _put("pass\n");
             else
                 _put("fail\n");
@@ -80,12 +80,12 @@ void process_message(void)
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 1, true);
+            PRINT_MEM(0, 10, true);
             break;
         
         // multi-channel measurement
         case 's':
-
+            Measurement_Multi32(10, true);
             break;
         
             

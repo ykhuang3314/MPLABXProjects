@@ -63,17 +63,15 @@ int main(void)
     SYSTEM_Initialize();
     __delay_ms(100);
     
-    spi2_open(SPI2_DEFAULT);
-    CS2_SetHigh();
     CS1_SetHigh();
+    CS2_SetHigh();
     
     // Initialize the state flag for spi no wait mode
     Writing_State_Initialize();
     spi2_NoWait_Initialize();   
     SPI1_NoWait_Initialize();
     Intan_State_Initialize();
-    //Unlock block protection register 
-    //UNLOCK_PROTECTION();
+
     
     while(1)
     {

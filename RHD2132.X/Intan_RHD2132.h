@@ -67,7 +67,7 @@ typedef enum{
     READ44,
     DUMMY1,
     DUMMY2,
-    END_RR
+    END_RR,
 }RHD2132_ReadReg;
 
 extern volatile RHD2132_CONVERT State_Conv;

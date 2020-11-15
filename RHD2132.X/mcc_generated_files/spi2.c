@@ -1,18 +1,18 @@
 
 /**
-  SPI1 Generated Driver API Source File
+  SPI2 Generated Driver API Source File
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    spi1.c
+    spi2.c
 
   @Summary
-    This is the generated source file for the SPI1 driver using PIC24 / dsPIC33 / PIC32MM MCUs
+    This is the generated source file for the SPI2 driver using PIC24 / dsPIC33 / PIC32MM MCUs
 
   @Description
-    This source file provides APIs for driver for SPI1.
+    This source file provides APIs for driver for SPI2.
     Generation Information :
         Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.168.0
         Device            :  PIC24FV16KA302
@@ -47,60 +47,59 @@
   Section: Included Files
 */
 
-#include "spi1.h"
+#include "spi2.h"
 
 /**
  Section: File specific functions
 */
 
-inline __attribute__((__always_inline__)) SPI1_TRANSFER_MODE SPI1_TransferModeGet(void);
-void SPI1_Exchange( uint8_t *pTransmitData, uint8_t *pReceiveData );
-uint16_t SPI1_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t *pReceiveData);
+inline __attribute__((__always_inline__)) SPI2_TRANSFER_MODE SPI2_TransferModeGet(void);
+void SPI2_Exchange( uint8_t *pTransmitData, uint8_t *pReceiveData );
+uint16_t SPI2_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t *pReceiveData);
 
 /**
  Section: Driver Interface Function Definitions
 */
 
 
-void SPI1_Initialize (void)
+void SPI2_Initialize (void)
 {
-    // MSTEN Master; DISSDO disabled; PPRE 4:1; SPRE 3:1; MODE16 enabled; SMP Middle; DISSCK disabled; CKP Idle:Low, Active:High; CKE Active to Idle; 
-    SPI1CON1 = 0x536;
+    // MSTEN Master; DISSDO disabled; PPRE 4:1; SPRE 2:1; MODE16 disabled; SMP Middle; DISSCK disabled; CKP Idle:Low, Active:High; CKE Active to Idle; 
+    SPI2CON1 = 0x13A;
     // SPIBEN enabled; SPIFPOL disabled; SPIFE disabled; 
-    SPI1CON2 = 0x01;
+    SPI2CON2 = 0x01;
     // SPITBF disabled; SISEL SPI_INT_TRMT_COMPLETE; SPIRBF disabled; SPIROV disabled; SPIEN enabled; SRXMPT disabled; SRMPT disabled; SPISIDL disabled; SPIBEC disabled; 
-    SPI1STAT = 0x8014;
+    SPI2STAT = 0x8014;
 }
-void SPI1_Exchange( uint8_t *pTransmitData, uint8_t *pReceiveData )
+void SPI2_Exchange( uint8_t *pTransmitData, uint8_t *pReceiveData )
 {
 
-    while( SPI1STATbits.SPITBF == true )
+    while( SPI2STATbits.SPITBF == true )
     {
 
     }
 
-    SPI1BUF = *((uint16_t*)pTransmitData);
+    SPI2BUF = *((uint8_t*)pTransmitData);
 
-    while ( SPI1STATbits.SRXMPT == true);
+    while ( SPI2STATbits.SRXMPT == true);
 
-    *((uint16_t*)pReceiveData) = SPI1BUF;
+    *((uint8_t*)pReceiveData) = SPI2BUF;
 
 }
 
-uint16_t SPI1_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t *pReceiveData)
+uint16_t SPI2_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t *pReceiveData)
 {
 
     uint16_t dataSentCount = 0;
     uint16_t dataReceivedCount = 0;
     uint16_t dummyDataReceived = 0;
-    uint16_t dummyDataTransmit = SPI1_DUMMY_DATA;
+    uint16_t dummyDataTransmit = SPI2_DUMMY_DATA;
 
     uint8_t  *pSend, *pReceived;
     uint16_t addressIncrement;
     uint16_t receiveAddressIncrement, sendAddressIncrement;
 
-    addressIncrement = 2;
-    byteCount >>= 1;
+    addressIncrement = 1;
 
 
     // set the pointers and increment delta 
@@ -128,25 +127,25 @@ uint16_t SPI1_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t
     }
 
 
-    while( SPI1STATbits.SPITBF == true )
+    while( SPI2STATbits.SPITBF == true )
     {
 
     }
 
     while (dataSentCount < byteCount)
     {
-        if ( SPI1STATbits.SPITBF != true )
+        if ( SPI2STATbits.SPITBF != true )
         {
-
-            SPI1BUF = *((uint16_t*)pSend);
+            SPI2BUF = *pSend;
 
             pSend += sendAddressIncrement;
             dataSentCount++;
         }
 
-        if (SPI1STATbits.SRXMPT == false)
+        if (SPI2STATbits.SRXMPT == false)
         {
-            *((uint16_t*)pReceived) = SPI1BUF;
+
+            *pReceived = SPI2BUF;
 
             pReceived += receiveAddressIncrement;
             dataReceivedCount++;
@@ -155,9 +154,10 @@ uint16_t SPI1_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t
     }
     while (dataReceivedCount < byteCount)
     {
-        if (SPI1STATbits.SRXMPT == false)
+        if (SPI2STATbits.SRXMPT == false)
         {
-            *((uint16_t*)pReceived) = SPI1BUF;
+
+            *pReceived = SPI2BUF;
 
             pReceived += receiveAddressIncrement;
             dataReceivedCount++;
@@ -167,20 +167,19 @@ uint16_t SPI1_ExchangeBuffer(uint8_t *pTransmitData, uint16_t byteCount, uint8_t
     return dataSentCount;
 }
 
-uint16_t SPI1_Exchange16bit( uint16_t data )
+uint8_t SPI2_Exchange8bit( uint8_t data )
 {
-    uint16_t receiveData;
-
-    SPI1_Exchange((uint8_t*)&data, (uint8_t*)&receiveData);
+    uint8_t receiveData;
+    
+    SPI2_Exchange(&data, &receiveData);
 
     return (receiveData);
 }
 
-uint16_t SPI1_Exchange16bitBuffer(uint16_t *dataTransmitted, uint16_t byteCount, uint16_t *dataReceived)
+uint16_t SPI2_Exchange8bitBuffer(uint8_t *dataTransmitted, uint16_t byteCount, uint8_t *dataReceived)
 {
-    return (SPI1_ExchangeBuffer((uint8_t*)dataTransmitted, byteCount, (uint8_t*)dataReceived));
+    return (SPI2_ExchangeBuffer(dataTransmitted, byteCount, dataReceived));
 }
-
 
 /**
 
@@ -209,18 +208,18 @@ uint16_t SPI1_Exchange16bitBuffer(uint16_t *dataTransmitted, uint16_t byteCount,
     |                | SPIx_Exchange16bit()       |                         |
     |----------------|----------------------------|-------------------------|
 */
-inline __attribute__((__always_inline__)) SPI1_TRANSFER_MODE SPI1_TransferModeGet(void)
+inline __attribute__((__always_inline__)) SPI2_TRANSFER_MODE SPI2_TransferModeGet(void)
 {
-	if (SPI1CON1bits.MODE16 == 0)
-        return SPI1_DRIVER_TRANSFER_MODE_8BIT;
+	if (SPI2CON1bits.MODE16 == 0)
+        return SPI2_DRIVER_TRANSFER_MODE_8BIT;
     else
-        return SPI1_DRIVER_TRANSFER_MODE_16BIT;
+        return SPI2_DRIVER_TRANSFER_MODE_16BIT;
 }
 
 
-SPI1_STATUS SPI1_StatusGet()
+SPI2_STATUS SPI2_StatusGet()
 {
-    return(SPI1STAT);
+    return(SPI2STAT);
 }
 /**
  End of File

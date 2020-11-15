@@ -16,11 +16,20 @@ void spi2_exchangeByte_NoWait(uint8_t data){
 
 // Full Duplex SPI Functions
 /*
-uint8_t spi2_exchangeByte(uint8_t b)
+void SPI2_Exchange( uint8_t *pTransmitData, uint8_t *pReceiveData )
 {
-    SPI2BUF = b;
-    while(!SPI2STATbits.SPIRBF);
-    return SPI2BUF;
+
+    while( SPI2STATbits.SPITBF == true )
+    {
+
+    }
+
+    SPI2BUF = *((uint8_t*)pTransmitData);
+
+    while ( SPI2STATbits.SRXMPT == true);
+
+    *((uint8_t*)pReceiveData) = SPI2BUF;
+
 }
 */
 

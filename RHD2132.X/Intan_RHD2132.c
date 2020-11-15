@@ -43,6 +43,7 @@ void Intan_ReadREG_NoWait(void){
     switch(State_RR){
         
         case(IDLE_RR):
+            IFS0bits.SPI1IF = 0;
             SetReadCMD(40);
             CS1_SetLow();
             SPI1_Exchange16bit_NoWait(Cmd_Read);
@@ -451,6 +452,7 @@ void Intan_CONVERT32(void){
     switch(State_Conv){
         
         case(CH0_Conv):
+            IFS0bits.SPI1IF = 0;
             SetConvertCMD(0);
             CS1_SetLow();
             SPI1_Exchange16bit_NoWait(Cmd_Conv);

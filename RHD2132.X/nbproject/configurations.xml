@@ -15,8 +15,7 @@
         <itemPath>mcc_generated_files/mcc.h</itemPath>
         <itemPath>mcc_generated_files/system.h</itemPath>
         <itemPath>mcc_generated_files/uart1.h</itemPath>
-        <itemPath>mcc_generated_files/spi2_types.h</itemPath>
-        <itemPath>mcc_generated_files/spi2_driver.h</itemPath>
+        <itemPath>mcc_generated_files/spi2.h</itemPath>
       </logicalFolder>
       <itemPath>Intan_RHD2132.h</itemPath>
       <itemPath>Comm.h</itemPath>
@@ -42,7 +41,7 @@
         <itemPath>mcc_generated_files/mcc.c</itemPath>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/uart1.c</itemPath>
-        <itemPath>mcc_generated_files/spi2_driver.c</itemPath>
+        <itemPath>mcc_generated_files/spi2.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>Intan_RHD2132.c</itemPath>
