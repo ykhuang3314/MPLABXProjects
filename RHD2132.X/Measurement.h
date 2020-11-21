@@ -15,7 +15,7 @@ extern "C" {
     
 void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element);
 void PRINT_MEM(uint16_t start_sec, uint16_t end_sec, bool flag);
-void Measurement_Multi32(uint16_t no_sec, bool flag);
+void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag);
 
 #ifdef	__cplusplus
 }

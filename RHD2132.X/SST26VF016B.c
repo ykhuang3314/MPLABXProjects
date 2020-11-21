@@ -292,6 +292,7 @@ void CHIP_ERASE (bool flagwait){
 bool TEST_COMM_MEM(void){
     uint8_t ID[3];
     JEDECID(ID);
+    //write_byte(ID, 3);
     if((ID[0] == 0xBF) && (ID[1] == 0x26) && (ID[2] == 0x41))
         return true;
     else

@@ -10,11 +10,20 @@ void _put(char *pt)
     uint8_t index;
     index = 0;
     while(pt[index]){
-        while(!UART1_IsTxReady());
         UART1_Write(pt[index++]);    
     }
+    
+    while(!UART1_IsTxDone());
 }
 
+void write_byte(uint8_t *pt, int length)
+{
+    int index;
+    for(index=0; index<length; index++){
+        UART1_Write(pt[index]);    
+    }
+    while(!UART1_IsTxDone());
+}
 
 void process_message(void)
 {
@@ -24,36 +33,40 @@ void process_message(void)
     
     switch(message){
         
-        //verified
-        case 't': // test UART
-            _put("pass\n");
+        case 'c':     
+            
+            //SPT1 Test
+            _put("SPI1:");          
+            
+            if(Intan_SPI_Test())
+                _put("pass.");
+            else
+                _put("fail.");
+
+            
+            //SPI2 Test
+            _put("SPI2:");
+            
+            if(TEST_COMM_MEM())
+                _put("pass.");
+            else
+                _put("fail.");
+
             break;
         
-        // verified
-        case 'r': // test spi communication with INTAN chip
-            if(Intan_SPI_NoWait_Test())
-                _put("pass\n");
-            else
-                _put("fail\n");
+                        
+        case 't': // test UART
+            _put("UART:");
+            _put("pass.");
             break;
-            
-        // verified    
+          
         case 'i': // Intan Initialization including REG configuration and ADC calibration
             if(Intan_Initialization(1000))
-                _put("done\n");
+                _put("done.");
             else
-                _put("fail\n");
+                _put("fail.");
             break;
-        
-        // verified    
-        case 'm': // test the communication between memory and pic
-
-            if(TEST_COMM_NoWait())
-                _put("pass\n");
-            else
-                _put("fail\n");
-            break;
-        
+                 
         // verified, but not working with the use of dynamic memory allocation  
         case 'x':
             Test_write_initialize();
@@ -62,33 +75,33 @@ void process_message(void)
         case 'd': // test storing data into the flash memory and fetching data from the flash memory    
            
             if(TEST_WRITE_READ())
-                _put("pass\n");
+                _put("pass.");
             else
-                _put("fail\n");    
+                _put("fail.");    
             break;
         
         case 'e':
             // Unlock the memory and erase the chip
             UNLOCK_PROTECTION();
             CHIP_ERASE(true);
-            _put("done\n");
+            _put("done.");
             break;
             
-        // Testing for converting 32 channel   
-        case 'c': //converting data
-            Intan_Convert_NoWait_Test();
+        // Testing for converting   
+        case 's': //converting data
+            
+            Intan_Convert_NoWait_Test(0, 10);
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 10, true);
-            break;
+            PRINT_MEM(0, 1, true);
+            break;     
         
-        // multi-channel measurement
-        case 's':
-            Measurement_Multi32(10, true);
+        case 'm': // Measurement
+            //void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
+            Measurement(0, 32, 1, true);
             break;
-        
-            
+                 
         default:
             break;
     }

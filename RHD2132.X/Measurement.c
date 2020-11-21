@@ -13,7 +13,6 @@ void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
     // received data from Intan RHD2132 is 16bit; while, the spi flash memory is 8bit.
     // conversion is required before dumping the data into memory
     
-    
     /*
     int num_element;
     num_element = sizeof(data_16b)/sizeof(data_16[0]);
@@ -31,12 +30,15 @@ void CONVERT_16_to_8(uint16_t *data_16b, uint8_t *data_8b, int num_element){
 
 void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
     
-    int i, j, data_size, no_ch;
-    data_size = 256;
-    no_ch = 32;
+    int data_size;
+    int i, j, display_size, print_iter;
+    
+    data_size = 256;    
+    display_size = 4;
+    print_iter = data_size/display_size;  
     
     uint8_t rdata[data_size];
-    uint8_t display[no_ch];
+    uint8_t display[display_size];
     
     uint32_t start_addr, end_addr;
     start_addr = start_sector;
@@ -48,25 +50,26 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
         if(start_addr < end_addr){
             
             READ_MEM_256(start_addr, rdata);
-            
-            for(i=0; i<(data_size/no_ch); i++){
+            for(i=0; i<print_iter; i++){
                 // Display data on COM via UART
-                for(j=0; j<no_ch; j++){
-                    display[j] = rdata[i*no_ch+j];
+                for(j=0; j<display_size; j++){
+                    display[j] = rdata[i*display_size+j];
                 }
-                _put((char*)display);
-                _put("\n");
+                write_byte(display, display_size);
+                //_put("\n");
             }
+            
+            //write_byte(rdata, data_size);
+            
             start_addr += data_size;
         }
         else{
             flag = false;
-            //_put("done\n");
         }
     }
 }
 
-void Measurement_Multi32(uint16_t no_sec, bool flag){
+void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag){
     
     int datasize;
     datasize = 32;
@@ -77,11 +80,10 @@ void Measurement_Multi32(uint16_t no_sec, bool flag){
     int i;
     bool flag_intan, flag_mem, flag_run;
     i = 0;
-    flag_run = flag;
-    flag_intan = true;
     
-    Intan_CONVERT32();
-       
+    Intan_Convert_Initialize(start_ch, end_ch);
+    Intan_Convert_Multi();
+    
     while(flag_intan){
         if(INTAN_SPI_State == SPI1_EXCHANGE){
             if(IFS0bits.SPI1IF){ 
@@ -93,7 +95,7 @@ void Measurement_Multi32(uint16_t no_sec, bool flag){
                 result_16bit[i] = SPI1BUF;
                 i++;
                 if(i < datasize)
-                    Intan_CONVERT32();
+                    Intan_Convert_Multi();
                 else{
                     INTAN_SPI_State = SPI1_IDLE;
                     i = 0;
@@ -118,7 +120,7 @@ void Measurement_Multi32(uint16_t no_sec, bool flag){
         flag_mem = true;  
         
         WRITE_ENABLE_NoWait();
-        Intan_CONVERT32();
+        Intan_Convert_Multi();
         PAGE_PROGRAM_NoWait();
         
         Writing_Initialize(sec, addr, result_8bit);
@@ -139,7 +141,7 @@ void Measurement_Multi32(uint16_t no_sec, bool flag){
                         INTAN_SPI_State = SPI1_IDLE;
                     }
                     else
-                        Intan_CONVERT32();
+                        Intan_Convert_Multi();
                 }
             }
             else{
@@ -167,11 +169,9 @@ void Measurement_Multi32(uint16_t no_sec, bool flag){
             addr = 0;
             sec +=1;
             if(sec > no_sec){
-                _put("done\n");
+                _put("done.");
                 flag_run = false;
             }
-        }    
-        
-    }
-    
+        }           
+    }  
 }

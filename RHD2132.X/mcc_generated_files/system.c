@@ -91,11 +91,11 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "uart1.h"
 #include "spi2.h"
 #include "spi1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
+#include "uart1.h"
 
 void SYSTEM_Initialize(void)
 {

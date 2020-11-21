@@ -6,10 +6,12 @@
 #include "Intan_RHD2132.h"
 #include "SPI_nowait.h"
 
-volatile RHD2132_CONVERT State_Conv;
 volatile RHD2132_ReadReg State_RR;
 uint16_t Cmd_Conv;
 uint16_t Cmd_Read;
+uint16_t start_channel;
+uint16_t current_channel;
+uint16_t end_channel;
 
 uint16_t Intan_ReadREG(uint16_t addr)
 {
@@ -35,7 +37,6 @@ uint16_t Intan_ReadREG(uint16_t addr)
 void Intan_State_Initialize(void){
     
     State_RR = IDLE_RR;
-    State_Conv = CH0_Conv;
 }
 
 void Intan_ReadREG_NoWait(void){
@@ -446,242 +447,27 @@ bool Intan_Initialization(double fSCLK)
     }
     return TestResult;
 }
-
-void Intan_CONVERT32(void){
+void Intan_Convert_Initialize(uint16_t start, uint16_t end){
     
-    switch(State_Conv){
-        
-        case(CH0_Conv):
-            IFS0bits.SPI1IF = 0;
-            SetConvertCMD(0);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH1_Conv;
-            break;
-        
-        case(CH1_Conv):
-            SetConvertCMD(1);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH2_Conv;
-            break;
-            
-        case(CH2_Conv):
-            SetConvertCMD(2);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH3_Conv;
-            break;
-            
-        case(CH3_Conv):
-            SetConvertCMD(3);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH4_Conv;
-            break;
-            
-        case(CH4_Conv):
-            SetConvertCMD(4);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH5_Conv;
-            break;
-            
-        case(CH5_Conv):
-            SetConvertCMD(5);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH6_Conv;
-            break;
-            
-        case(CH6_Conv):
-            SetConvertCMD(6);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH7_Conv;
-            break;
-            
-        case(CH7_Conv):
-            SetConvertCMD(7);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH8_Conv;
-            break;
-            
-        case(CH8_Conv):
-            SetConvertCMD(8);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH9_Conv;
-            break;
-            
-        case(CH9_Conv):
-            SetConvertCMD(9);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH10_Conv;
-            break;    
-            
-        case(CH10_Conv):
-            SetConvertCMD(10);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH11_Conv;
-            break;
-        
-        case(CH11_Conv):
-            SetConvertCMD(11);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH12_Conv;
-            break;    
-        
-        case(CH12_Conv):
-            SetConvertCMD(12);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH13_Conv;
-            break;
-            
-        case(CH13_Conv):
-            SetConvertCMD(13);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH14_Conv;
-            break;
-            
-        case(CH14_Conv):
-            SetConvertCMD(14);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH15_Conv;
-            break;
-            
-        case(CH15_Conv):
-            SetConvertCMD(15);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH16_Conv;
-            break;
-            
-        case(CH16_Conv):
-            SetConvertCMD(16);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH17_Conv;
-            break;
-            
-        case(CH17_Conv):
-            SetConvertCMD(17);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH18_Conv;
-            break;
-            
-        case(CH18_Conv):
-            SetConvertCMD(18);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH19_Conv;
-            break;
-        
-        case(CH19_Conv):
-            SetConvertCMD(19);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH20_Conv;
-            break;
-            
-        case(CH20_Conv):
-            SetConvertCMD(20);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH21_Conv;
-            break;
-        
-        case(CH21_Conv):
-            SetConvertCMD(21);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH22_Conv;
-            break;    
-        
-        case(CH22_Conv):
-            SetConvertCMD(22);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH23_Conv;
-            break;
-            
-        case(CH23_Conv):
-            SetConvertCMD(23);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH24_Conv;
-            break;
-            
-        case(CH24_Conv):
-            SetConvertCMD(24);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH25_Conv;
-            break;
-            
-        case(CH25_Conv):
-            SetConvertCMD(25);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH26_Conv;
-            break;
-            
-        case(CH26_Conv):
-            SetConvertCMD(26);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH27_Conv;
-            break;
-            
-        case(CH27_Conv):
-            SetConvertCMD(27);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH28_Conv;
-            break;
-            
-        case(CH28_Conv):
-            SetConvertCMD(28);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH29_Conv;
-            break;
-        
-        case(CH29_Conv):
-            SetConvertCMD(29);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH30_Conv;
-            break;    
-            
-        case(CH30_Conv):
-            SetConvertCMD(30);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH31_Conv;
-            break;
-            
-        case(CH31_Conv):
-            SetConvertCMD(31);
-            CS1_SetLow();
-            SPI1_Exchange16bit_NoWait(Cmd_Conv);
-            State_Conv = CH0_Conv;
-            break;
-        
-        default:
-            break;
-    }
+    start_channel = start;
+    current_channel = start_channel;
+    end_channel = end;
 }
 
-void Intan_Convert_NoWait_Test(void){
+void Intan_Convert_Multi(void){
+
+    IFS0bits.SPI1IF = 0;
+    SetConvertCMD(current_channel);
+    CS1_SetLow();
+    SPI1_Exchange16bit_NoWait(Cmd_Conv);
+    current_channel++;
+    if(current_channel > end_channel)
+        current_channel = start_channel;
+        
+}
+
+
+void Intan_Convert_NoWait_Test(uint16_t start_ch, uint16_t end_ch){
 
     uint16_t Rx_buf[32];
     bool flag_run;
@@ -690,8 +476,10 @@ void Intan_Convert_NoWait_Test(void){
     flag_run = true;
     i = 0;
     
-    Intan_CONVERT32();
-       
+    Intan_Convert_Initialize(start_ch, end_ch);
+    //Intan_CONVERT32();
+    Intan_Convert_Multi();
+    
     while(flag_run){
         if(INTAN_SPI_State == SPI1_EXCHANGE){
             if(IFS0bits.SPI1IF){ 
@@ -703,7 +491,8 @@ void Intan_Convert_NoWait_Test(void){
                 Rx_buf[i] = SPI1BUF;
                 i++;
                 if(i < 32)
-                    Intan_CONVERT32();
+                    //Intan_CONVERT32();
+                    Intan_Convert_Multi();
                 else
                     INTAN_SPI_State = SPI1_IDLE;
             }
@@ -712,7 +501,6 @@ void Intan_Convert_NoWait_Test(void){
             flag_run = false;
         }
     }
-   
     
 }
 
