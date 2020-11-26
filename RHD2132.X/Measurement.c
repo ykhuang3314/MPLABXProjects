@@ -54,16 +54,20 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
                 // Display data on COM via UART
                 for(j=0; j<display_size; j++){
                     display[j] = rdata[i*display_size+j];
+                    if(display[j]==0x00) // avoid termination
+                        display[j] += 1;
                 }
                 write_byte(display, display_size);
-                //_put("\n");
+                
             }
             
+            //part of data is missing when the data length is larger than 4 byte
             //write_byte(rdata, data_size);
             
             start_addr += data_size;
         }
         else{
+            write_byte(0x00, 1); //termination byte
             flag = false;
         }
     }
@@ -75,7 +79,7 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
     datasize = 32;
     
     uint16_t result_16bit[datasize];
-    uint8_t result_8bit[2*datasize], dummy;
+    uint8_t result_8bit[2*datasize], Rx_MEM;
     
     int i;
     bool flag_intan, flag_mem, flag_run;
@@ -121,7 +125,7 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
         
         WRITE_ENABLE_NoWait();
         Intan_Convert_Multi();
-        PAGE_PROGRAM_NoWait();
+        PAGE_PROGRAM_NoWait_V2();
         
         Writing_Initialize(sec, addr, result_8bit);
        
@@ -153,8 +157,10 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
                     IFS2bits.SPI2IF = 0;    
                     MEM_SPI_State = SPI2_IDLE;
                     //Need to read receive buffer such that the hardware clear SPIRBF bit                
-                    dummy = SPI2BUF;                    
-                    PAGE_PROGRAM_NoWait();                 
+                    Rx_MEM = SPI2BUF;
+                    if(State_PP == ISBUSY_PP)
+                        status = Rx_MEM;
+                    PAGE_PROGRAM_NoWait_V2();                    
                 }
             }
             else{

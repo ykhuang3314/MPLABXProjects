@@ -42,7 +42,7 @@ void process_message(void)
                 _put("pass.");
             else
                 _put("fail.");
-
+            
             
             //SPI2 Test
             _put("SPI2:");
@@ -94,13 +94,20 @@ void process_message(void)
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 1, true);
+            PRINT_MEM(0, 64, true);
             break;     
         
-        case 'm': // Measurement
+        case 'm': // Single-Channel Measurement
             //void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
-            Measurement(0, 32, 1, true);
+            _put("Meas.");
+            Measurement(0, 0, 64, true);
             break;
+        
+        case 'M': // Multi-Channel Measurement
+            _put("Meas.");
+            Measurement(0, 3, 64, true);
+            break;
+                    
                  
         default:
             break;

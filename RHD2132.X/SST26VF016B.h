@@ -50,9 +50,19 @@ extern "C" {
 typedef enum{
     IDLE_PP,
     ADDRESS_PP,       
-    WRITE_PP, 
-    END_PP, 
+    WRITE_PP,
+    ENDWRITE_PP,
+    RDSR_PP,
+    DUMMY_PP,
+    ISBUSY_PP,
+    END_PP
 }SST26VF016B_PP;
+
+typedef enum{
+    IDLE_RDSR,
+    DUMMY_RDSR,
+    END_RDSR, 
+}SST26VF016B_RDSR;
 
 typedef enum{
     CMD_ID,
@@ -65,6 +75,7 @@ typedef enum{
 
 extern volatile SST26VF016B_PP State_PP;
 extern volatile SST26VF016B_ID State_ID;
+extern volatile SST26VF016B_RDSR State_RDSR;
 extern int cnt_data, cnt_addr;
 extern uint8_t wdata[64];
 extern uint8_t status; 
@@ -90,6 +101,9 @@ void WRITE_ENABLE_NoWait(void);
 void Writing_State_Initialize(void);
 void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data);
 void PAGE_PROGRAM_NoWait(void);
+void PAGE_PROGRAM_NoWait_V2(void);
+void Check_Status_NoWait(void);
+void IS_BUSY_NoWait(void);
 
 // functions for testing purpose
 bool TEST_COMM_MEM (void); 
