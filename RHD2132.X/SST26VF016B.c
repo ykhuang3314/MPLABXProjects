@@ -371,14 +371,16 @@ void Writing_State_Initialize(void){
 
 void Writing_Initialize(uint16_t sec_no, uint16_t addr, uint8_t *data){
     
-    // Starting address
+    //datasize for writing
     int size;
     size = 64;
+    
+    // Starting address
     uint32_t address;
     address = sec_no;
     address <<= 12;
     address += addr;
-    
+   
     Write_Addr[0] = (address >> 16) & 0xFF;
     Write_Addr[1] = (address >> 8) & 0xFF;
     Write_Addr[2] = address & 0xFF;

@@ -217,15 +217,17 @@ void SetReadCMD(uint16_t REG_Addr){
 void Intan_ADC_Calibrate(void)
 {
     //initiate ADC calibration routine
-    uint16_t tmp, Tx_buf[10]; 
+    uint16_t tmp, Tx_buf[15]; 
     UNUSED(tmp);
+    
     Tx_buf[0] = CALIBRATE_CMD;
     int i;
-    for(i = 1; i < 10; i++)
+    for(i = 1; i < 15; i++)
     {
         Tx_buf[i] = Dummy_CMD; // at least nine dummy CMD need to be sent after a CALIBRATE CMD 
-    }    
-    for(i=0; i<10; i++)
+    }
+    
+    for(i=0; i<15; i++)
     {    
         //__delay_us(1);
         CS1_SetLow();
@@ -241,6 +243,7 @@ void Intan_ADC_Clear(void)
     tmp = SPI1_Exchange16bit(CLEAR_CMD);
     CS1_SetHigh();
 }
+
 
 void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
 {
@@ -308,7 +311,6 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     //Define sampling frequency(kS/sec) and corresponding parameter 
     double sampleRate = fSCLK/16;
     
-    muxLoad = 0;
 
     if (sampleRate < 120) {
         muxBias = 40;
@@ -350,7 +352,10 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     adcComparatorSelect = 2;    // ADC comparator select; always set to 2
 
     vddSenseEnable = 1;         // supply voltage sensor enable (0 = disable; 1 = enable)
-
+    
+    muxLoad = 0;                // configure the total capaciance at the input of the ADC
+                                // always be set to 0
+    
     tempS1 = 0;                 // temperature sensor S1 (0-1); 0 = power saving mode when temperature sensor is
                                 // not in use
     tempS2 = 0;                 // temperature sensor S2 (0-1); 0 = power saving mode when temperature sensor is
@@ -367,9 +372,9 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     dspEn = 1;                  // DSP offset removal enable/disable
     dspCutoffFreq = 1;          // DSP offset removal HPF cutoff frequency
 
-    zcheckDacPower = 1;         // impedance testing DAC power-up (0 = power down; 1 = power up)
+    zcheckDacPower = 0;         // impedance testing DAC power-up (0 = power down; 1 = power up)
     zcheckLoad = 0;             // impedance testing dummy load (0 = normal operation; 1 = insert 60 pF to ground)
-    zcheckScale = 0x00;         // impedance testing scale factor (100 fF, 1.0 pF, or 10.0 pF)
+    zcheckScale = 0;            // impedance testing scale factor (100 fF, 1.0 pF, or 10.0 pF)
     zcheckConnAll = 0;          // impedance testing connect all (0 = normal operation; 1 = connect all electrodes together)
     zcheckSelPol = 0;           // impedance testing polarity select (RHD2216 only) (0 = test positive inputs;
                                 // 1 = test negative inputs)
@@ -383,9 +388,15 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     adcAux1En = 1;              // enable ADC aux1 input (when RH1 is on chip) (0 = disable; 1 = enable)
     adcAux2En = 1;              // enable ADC aux2 input (when RH2 is on chip) (0 = disable; 1 = enable)
     adcAux3En = 1;              // enable ADC aux3 input (when RL is on chip) (0 = disable; 1 = enable)
-
+    
+    
+    // upper bandwidth 
     rH1Dac1 = 46; rH1Dac2 = 2; rH2Dac1 = 30; rH2Dac2 = 3; // set upper bandwidth of amplifiers to be 1kHz
-    rLDac1 = 44; rLDac2 = 6; rLDac3 = 0;                  // set lower bandwidth of amplifiers to be 1Hz
+    //rH1Dac1 = 30; rH1Dac2 = 5; rH2Dac1 = 43; rH2Dac2 = 6; // set upper bandwidth of amplifiers to be 500Hz
+    
+    // lower bandwidth
+    rLDac1 = 25; rLDac2 = 0; rLDac3 = 0;                  // set lower bandwidth of amplifiers to be 100Hz
+    //rLDac1 = 44; rLDac2 = 6; rLDac3 = 0;                  // set lower bandwidth of amplifiers to be 1Hz
     
     int i;
     for(i = 0; i < 32; i++)
@@ -411,8 +422,8 @@ void Intan_REG_Initialization(double fSCLK, uint16_t *REG_data)
     Tx_buf[12] = (offChipRL << 7) | rLDac1;
     Tx_buf[13] = (adcAux3En << 7) | (rLDac3 << 6) | rLDac2;
     Tx_buf[14] = (aPwr[7] << 7) | (aPwr[6] << 6) | (aPwr[5] << 5) | (aPwr[4] << 4) | (aPwr[3] << 3) | (aPwr[2] << 2) | (aPwr[1] << 1) | aPwr[0];
-    Tx_buf[15] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
-    Tx_buf[16] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[0];
+    Tx_buf[15] = (aPwr[15] << 7) | (aPwr[14] << 6) | (aPwr[13] << 5) | (aPwr[12] << 4) | (aPwr[11] << 3) | (aPwr[10] << 2) | (aPwr[9] << 1) | aPwr[8];
+    Tx_buf[16] = (aPwr[23] << 7) | (aPwr[22] << 6) | (aPwr[21] << 5) | (aPwr[20] << 4) | (aPwr[19] << 3) | (aPwr[18] << 2) | (aPwr[17] << 1) | aPwr[16];
     Tx_buf[17] = (aPwr[31] << 7) | (aPwr[30] << 6) | (aPwr[29] << 5) | (aPwr[28] << 4) | (aPwr[27] << 3) | (aPwr[26] << 2) | (aPwr[25] << 1) | aPwr[24];      
     
     memcpy(REG_data, &Tx_buf[0], 36);
@@ -431,8 +442,8 @@ bool Intan_Initialization(double fSCLK)
     uint16_t data[18], ReadResult[18];
     
     Intan_REG_Initialization(fSCLK, data);
-    __delay_ms(1);
-    Intan_ADC_Calibrate();
+    //__delay_ms(1);
+    //Intan_ADC_Calibrate();
     
     bool TestResult;
     TestResult = true;
@@ -447,6 +458,8 @@ bool Intan_Initialization(double fSCLK)
     }
     return TestResult;
 }
+
+
 void Intan_Convert_Initialize(uint16_t start, uint16_t end){
     
     start_channel = start;

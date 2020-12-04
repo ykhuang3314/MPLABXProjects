@@ -54,6 +54,7 @@ void PRINT_MEM(uint16_t start_sector, uint16_t end_sector, bool flag){
                 // Display data on COM via UART
                 for(j=0; j<display_size; j++){
                     display[j] = rdata[i*display_size+j];
+                    
                     if(display[j]==0x00) // avoid termination
                         display[j] += 1;
                 }
@@ -79,14 +80,16 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
     datasize = 32;
     
     uint16_t result_16bit[datasize];
-    uint8_t result_8bit[2*datasize], Rx_MEM;
+    uint8_t result_8bit[2*datasize], Rx_MEM, tmp;
     
-    int i;
+    int i, cnt;
     bool flag_intan, flag_mem, flag_run;
     i = 0;
+    cnt = 0; // for counting the first two spi exchange 
     
     Intan_Convert_Initialize(start_ch, end_ch);
     Intan_Convert_Multi();
+    flag_intan = true;
     
     while(flag_intan){
         if(INTAN_SPI_State == SPI1_EXCHANGE){
@@ -94,10 +97,16 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
                 IFS0bits.SPI1IF = 0;
                 CS1_SetHigh();
                 INTAN_SPI_State = SPI1_IDLE;
-                //Need to read receive buffer such that the hardware clear SPIRBF bit
-                //or clear the receive overflow flag bit manually to make it work.
-                result_16bit[i] = SPI1BUF;
-                i++;
+                
+                //ignore  the first two return value 
+                if(cnt<2){
+                    tmp = SPI1BUF;
+                    cnt++;
+                }
+                else{
+                    result_16bit[i] = SPI1BUF;
+                    i++;
+                }
                 if(i < datasize)
                     Intan_Convert_Multi();
                 else{
@@ -117,6 +126,7 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
     uint16_t addr, sec;
     addr = 0;
     sec = 0;
+    flag_run = true;
     
     while(flag_run){
         
@@ -136,8 +146,6 @@ void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
                     IFS0bits.SPI1IF = 0;
                     CS1_SetHigh();
                     INTAN_SPI_State = SPI1_IDLE;
-                    //Need to read receive buffer such that the hardware clear SPIRBF bit
-                    //or clear the receive overflow flag bit manually to make it work.
                     result_16bit[i] = SPI1BUF;
                     i++;
                     if(i == datasize){

@@ -39,8 +39,8 @@ extern "C" {
 // Mask for Status REG
 #define isBUSY_MASK 0x01 // internal write operation in progress 
 #define isWRITEALBE_MASK 0x02 // device is write-enabled 
-#define isERASESUSPEND_MASH 0x04 // erase suspended    
-#define isPROGRAMSUSPEND_MASH 0x08 // program suspended
+#define isERASESUSPEND_MASK 0x04 // erase suspended    
+#define isPROGRAMSUSPEND_MASK 0x08 // program suspended
 
 //Mask for address
 #define SECTOR_MASK 0xFFFFF000 // one sector contains 4kbyte     

@@ -4,6 +4,7 @@
 #include "Measurement.h"
 #include <string.h>
 
+int NumSec;
 
 void _put(char *pt)
 {
@@ -61,13 +62,17 @@ void process_message(void)
             break;
           
         case 'i': // Intan Initialization including REG configuration and ADC calibration
-            if(Intan_Initialization(1000))
+            if(Intan_Initialization(500))
                 _put("done.");
             else
                 _put("fail.");
+            NumSec = 16;
+            break; 
+        
+        case 'C':
+            Intan_ADC_Calibrate();
             break;
-                 
-        // verified, but not working with the use of dynamic memory allocation  
+        
         case 'x':
             Test_write_initialize();
             break;
@@ -94,21 +99,71 @@ void process_message(void)
             break;
         
         case 'p': //print out data stored in memory
-            PRINT_MEM(0, 64, true);
+            PRINT_MEM(0, NumSec, true);
             break;     
         
         case 'm': // Single-Channel Measurement
             //void Measurement(uint16_t start_ch, uint16_t end_ch, uint16_t no_sec, bool flag)
             _put("Meas.");
-            Measurement(0, 0, 64, true);
+            Measurement(0, 0, NumSec, true);
             break;
         
         case 'M': // Multi-Channel Measurement
             _put("Meas.");
-            Measurement(0, 3, 64, true);
+            Measurement(0, 3, NumSec, true);
             break;
-                    
-                 
+        
+        case '1':
+            _put("Meas.");
+            Measurement(0, 0, NumSec, true);
+            break;
+        case '2':
+            _put("Meas.");
+            Measurement(0, 1, NumSec, true);
+            break;
+        case '3':
+            _put("Meas.");
+            Measurement(0, 2, NumSec, true);
+            break;
+        case '4':
+            _put("Meas.");
+            Measurement(0, 3, NumSec, true);
+            break;
+        case '5':
+            _put("Meas.");
+            Measurement(0, 4, NumSec, true);
+            break;
+        case '6':
+            _put("Meas.");
+            Measurement(0, 5, NumSec, true);
+            break;
+        case '7':
+            _put("Meas.");
+            Measurement(0, 6, NumSec, true);
+            break;
+        case '8':
+            _put("Meas.");
+            Measurement(0, 7, NumSec, true);
+            break;            
+        case 'f':
+            _put("Meas.");
+            Measurement(0, 15, NumSec, true);           
+            break;
+        case 'a':
+            _put("Meas.");
+            Measurement(0, 31, NumSec, true);
+            break;
+        
+        case 'v':
+            _put("VDD.");
+            Measurement(48, 48, NumSec, true);
+            break;
+            
+        case 'A':
+            _put("Aux1.");
+            Measurement(32, 32, NumSec, true);
+            break;
+            
         default:
             break;
     }
